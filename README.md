@@ -7,6 +7,6 @@ Data analysis and visualization of bird flu data provided by the CDC
 | :------: | :------: | :---: |
 | David Stepanov  | jajajava    | ds29123@georgiasouthern.edu |
 | Sydney Boles | BlueRogue12    | sb35329@georgiasouthern.edu
-| Kai Fang      | kaifang02 | kf12106@georgiasouthern.edu |
-| Phillip Mejia | oscarmejia1776 | om00913@georgiasouthern.edu |
-| Michael Aaron | MAaron45 | ma17700@georgiasouthern.edu |
+| ---- | ---- | ---- |  < Add your name, username, email instead of the ----
+| ---- | ---- | ---- |
+| ---- | ---- | ---- |
