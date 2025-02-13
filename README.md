@@ -1,5 +1,12 @@
 # SE-2025Spring-GitOffMyLawn
 Data analysis and visualization of bird flu data provided by the CDC
 
-Team Members:
-Sydney Boles (sb35329@georgiasouthern.edu), David Stepanov (ds29123@georgiasouthern.edu), Phillip Mejia (om00913@georgiasouthern.edu), Kai Fang (kf12106@georgiasouthern.edu), Mike Aaron (ma17700@georgiasouthern.edu)
+<br> <br/>
+# Team members:
+| Name     | Username | Email |
+| :------: | :------: | :---: |
+| David Stepanov  | jajajava    | ds29123@georgiasouthern.edu |
+| Sydney Boles | BlueRogue12    | sb35329@georgiasouthern.edu
+| Kai Fang      | kaifang02 | kf12106@georgiasouthern.edu |
+| Phillip Mejia | oscarmejia1776 | om00913@georgiasouthern.edu |
+| Michael Aaron | MAaron45 | ma17700@georgiasouthern.edu |
