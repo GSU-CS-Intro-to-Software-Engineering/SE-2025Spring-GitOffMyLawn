@@ -30,13 +30,14 @@ Git installed → Check by running:
 
 ## Setting Up the project
 
-1. Clone the repository - Run this command in whatever directory you want the project
+1. **Clone the repository**
+   Run this command in whatever directory you want the project
 
 ```bash
   git clone https://github.com/GSU-CS-Intro-to-Software-Engineering/SE-2025Spring-GitOffMyLawn.git
 ```
 
-2. Create and activate a virtual environment
+2. **Create and activate a virtual environment**
 
 ```bash
 python3 -m venv flu_finder_venv
@@ -44,21 +45,20 @@ source flu_finder_venv/bin/activate  # For macOS/Linux
 flu_finder_venv\Scripts\Activate     # For Windows (PowerShell)
 ```
 
-3. Install dependencies
+3. **Install dependencies**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Set up environment variables
-
-- Create a .env file in the root directory and add:
+4. **Set up environment variables**
+   Create a .env file in the root directory and add:
 
 ```bash
 DATABASE_URL=your_postgres_url_here
 ```
 
-5. Test the database connection
+5. **Test the database connection**
 
 ```bash
 python -c "from flu_finder_src.db import test_query; test_query()"
@@ -70,3 +70,18 @@ If succesful, you should see:
 Connected to database
 Database time: YYYY-MM-DD HH:MM:SS+00:00
 ```
+
+6. **Fetching the Latest CDC Data**
+
+Before running queries, you need to **fetch the latest data** from the CDC.
+The script `data_fetcher.py` downloads and saves the dataset as a local `data.csv` file in the root of the project.
+
+### **How to Run `data_fetcher.py`**
+
+From the root directory run:
+
+```bash
+python flu_finder_src/utils/data_fetcher.py
+```
+
+Your data should now be upt to date from the CDC.
