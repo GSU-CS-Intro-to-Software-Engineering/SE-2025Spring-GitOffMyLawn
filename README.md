@@ -61,10 +61,10 @@ DATABASE_URL=your_postgres_url_here
 5. **Test the database connection**
 
 ```bash
-python -c "from flu_finder_src.db import test_query; test_query()"
+python -c "from db import test_query; test_query()"
 ```
 
-If succesful, you should see:
+If successful, you should see:
 
 ```bash
 Connected to database
@@ -84,4 +84,4 @@ From the root directory run:
 python flu_finder_src/utils/data_fetcher.py
 ```
 
-Your data should now be upt to date from the CDC.
+Your data should now be up to date from the CDC.
