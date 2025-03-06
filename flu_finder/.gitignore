@@ -1,4 +1,6 @@
 flu_finder_venv
+/data.csv
 data.csv
 .env
-__pycache__/
+**/__pycache__/
+

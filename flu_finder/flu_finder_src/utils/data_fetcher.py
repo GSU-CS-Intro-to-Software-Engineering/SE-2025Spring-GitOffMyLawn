@@ -3,20 +3,16 @@ import sys
 import requests
 import getpass
 import polars as pl
+from dotenv import load_dotenv
 
 # CSV URL
 csv_url = "https://www.cdc.gov/bird-flu/modules/situation-summary/commercial-backyard-flocks.csv"
 
-# Get the current user
-user = getpass.getuser()
+# Load environment variables from .env
+load_dotenv()
 
-# Determine the correct download path based on OS
-if "microsoft-standard" in os.uname().release.lower():  # Detect WSL
-    download_path = f"/mnt/h/Downloads/data.csv"  
-elif sys.platform == "darwin":  # Detect macOS
-    download_path = f"/Users/{user}/Downloads/data.csv"
-else:
-    download_path = os.path.join(os.getcwd(), "data.csv")  # Fallback for other OS
+# Get download path from .env (default to project root if not set)
+download_path = os.getenv("DOWNLOAD_PATH", os.path.join(os.getcwd(), "data.csv"))
 
 print(f"Saving file to: {download_path}")
 
@@ -40,5 +36,10 @@ df = df.with_columns(pl.col("Outbreak Date").str.strptime(pl.Date, "%m-%d-%Y")).
 pl.Config.set_tbl_rows(len(df))
 
 # Sort by year of "Outbreak Date" and print
-df_sorted = df.sort(pl.col("Outbreak Date").dt.year())
-print(df_sorted)
+# df_sorted = df.sort(pl.col("Outbreak Date").dt.year())
+# print(df_sorted)
+
+# Add this at the end of data_fetcher.py
+def get_dataframe():
+    """Returns the loaded DataFrame."""
+    return df
