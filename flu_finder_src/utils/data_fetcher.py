@@ -14,32 +14,29 @@ load_dotenv()
 # Get download path from .env (default to project root if not set)
 download_path = os.getenv("DOWNLOAD_PATH", os.path.join(os.getcwd(), "data.csv"))
 
-print(f"Saving file to: {download_path}")
 
 # Download the CSV file
-response = requests.get(csv_url)
-if response.status_code == 200:
-    with open(download_path, "wb") as file:
-        file.write(response.content)
-    print(f"CSV file downloaded to {download_path}")
-else:
-    print("Couldn't download CSV")
-    sys.exit()
+def download_csv():
 
-# Load the CSV into Polars
-df = pl.read_csv(download_path, try_parse_dates=True)
+    print(f"Saving file to: {download_path}")
+    response = requests.get(csv_url)
+    if response.status_code == 200:
+        with open(download_path, "wb") as file:
+            file.write(response.content)
+        print(f"CSV file downloaded to {download_path}")
+    else:
+        print("Couldn't download CSV")
+        sys.exit()
 
-# Convert "Outbreak Date" to Date type and sort
-df = df.with_columns(pl.col("Outbreak Date").str.strptime(pl.Date, "%m-%d-%Y")).sort("Outbreak Date")
+def get_sorted_dataframe():
+    # Load the CSV into Polars
+    df = pl.read_csv(download_path, try_parse_dates=True, row_index_name="index")
 
-# Configure Polars to display all rows
-pl.Config.set_tbl_rows(len(df))
+    # Convert "Outbreak Date" to Date type and sort
+    df_sorted = df.with_columns(pl.col("Outbreak Date").str.strptime(pl.Date, "%m-%d-%Y")).sort("Outbreak Date")
 
-# Sort by year of "Outbreak Date" and print
-# df_sorted = df.sort(pl.col("Outbreak Date").dt.year())
-# print(df_sorted)
+    # Configure Polars to display all rows
+    pl.Config.set_tbl_rows(len(df_sorted))
 
-# Add this at the end of data_fetcher.py
-def get_dataframe():
     """Returns the loaded DataFrame."""
-    return df
+    return df_sorted
