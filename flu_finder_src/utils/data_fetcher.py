@@ -4,6 +4,7 @@ import requests
 import getpass
 import polars as pl
 from dotenv import load_dotenv
+from pathlib import Path
 
 # CSV URL
 csv_url = "https://www.cdc.gov/bird-flu/modules/situation-summary/commercial-backyard-flocks.csv"
@@ -11,18 +12,15 @@ csv_url = "https://www.cdc.gov/bird-flu/modules/situation-summary/commercial-bac
 # Load environment variables from .env
 load_dotenv()
 
-# Get download path from .env (default to project root if not set)
-download_path = os.getenv("DOWNLOAD_PATH", os.path.join(os.getcwd(), "data.csv"))
-
+# Download path that comes from .env file
+download_path = Path(os.getenv("DOWNLOAD_PATH"))
 
 # Download the CSV file
 def download_csv():
-
     print(f"Saving file to: {download_path}")
     response = requests.get(csv_url)
     if response.status_code == 200:
-        with open(download_path, "wb") as file:
-            file.write(response.content)
+        download_path.write_bytes(response.content)
         print(f"CSV file downloaded to {download_path}")
     else:
         print("Couldn't download CSV")
@@ -40,3 +38,6 @@ def get_sorted_dataframe():
 
     """Returns the loaded DataFrame."""
     return df_sorted
+
+if __name__ == "__main__":
+    download_csv()  # Ensure script runs when executed
