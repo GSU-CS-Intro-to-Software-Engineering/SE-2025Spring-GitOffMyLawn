@@ -31,9 +31,9 @@ def case_to_dict(case: dict) -> dict:
 if __name__ == "__main__":
     
     # Replace index with case number
-    index = 0
+    index = 0 
 
-    # Allows fetching case once
+    # Fetch the case using the integer index
     case = df.row(index, named=True) 
 
     # Print results
