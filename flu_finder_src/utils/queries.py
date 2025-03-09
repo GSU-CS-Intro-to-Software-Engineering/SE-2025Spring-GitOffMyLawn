@@ -1,7 +1,7 @@
 import polars as pl
-from data_fetcher import get_dataframe
+from data_fetcher import get_sorted_dataframe
 
-df = get_dataframe()
+df = get_sorted_dataframe()
 
 #------------------------------------------- State Methods -----------------------------------------#
 # Filter cases by State
