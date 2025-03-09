@@ -13,13 +13,13 @@ def initialize_map(location=None, zoom_start=5):
 
 
 
-# # test_map.py
-# from flu_finder_src.routes.map_visualizer import initialize_map
+# test_map.py
+# from flu_finder_src.utils.map_visualizer import initialize_map
 
-# # Initialize the map
+# Initialize the map
 # my_map = initialize_map()
 
-# # Save the map as an HTML file
+# Save the map as an HTML file
 # my_map.save("test_map.html")
 
 # print("Map has been saved as test_map.html")
