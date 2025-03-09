@@ -4,7 +4,17 @@ from data_fetcher import get_dataframe
 # Load the DataFrame
 df = get_dataframe()
 
+# Sort the DataFrame by index (assuming "index" is a column in the DataFrame)
+df_sorted = df.sort("index")
+
 #------------------------------------------- Case Methods -----------------------------------------#
+# Find a case by index
+def find_case(index: int) -> pl.DataFrame:
+    """
+    Returns a DataFrame containing the case with the specified index.
+    """
+    return df_sorted.filter(pl.col("index") == index)
+
 # Get case summary
 def get_case_summary(case: pl.DataFrame) -> str:
     flock_size = case["Flock Size"][0]  
@@ -30,8 +40,8 @@ if __name__ == "__main__":
     # Replace index with case number
     index = 0 
 
-    # Fetch the case as a DataFrame (single row)
-    case = df[index:index + 1]  
+    # Fetch the case as a DataFrame (single row) using the find_case method
+    case = find_case(index)
 
     # Print results
     print(get_case_summary(case))
