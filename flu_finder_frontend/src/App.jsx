@@ -1,21 +1,19 @@
-import { useEffect, useState } from "react";
+import React from "react";
+import { Box } from "@mui/material";
+import Sidebar from "./components/Sidebar";
+import Navbar from "./components/Navbar";
+import Homepage from "./views/Homepage";
 
-function App() {
-  const [status, setStatus] = useState("Fetching data...");
-
-  useEffect(() => {
-    fetch("http://127.0.0.1:5000/api/fetch-data") // Call your Flask API
-      .then((response) => response.json()) // Convert response to JSON
-      .then((data) => setStatus(data.status)) // Update state with API response
-      .catch((error) => console.error("Error fetching data:", error));
-  }, []);
-
+const App = () => {
   return (
-    <div>
-      <h1>Flu Finder Frontend</h1>
-      <p>Backend Response: {status}</p>
-    </div>
+    <Box sx={{ display: "flex" }}>
+      <Sidebar />
+      <Box sx={{ flexGrow: 1 }}>
+        <Navbar />
+        <Homepage />
+      </Box>
+    </Box>
   );
-}
+};
 
 export default App;

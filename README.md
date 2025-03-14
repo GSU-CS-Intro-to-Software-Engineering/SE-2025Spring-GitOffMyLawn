@@ -74,7 +74,7 @@ DOWNLOAD_PATH=flu_finder_src/data.csv
 5. **Test the database connection**
 
 ```bash
-python -c "from db import test_query; test_query()"
+python -c "from flu_finder_src.db import test_query; test_query()"
 ```
 
 If successful, you should see:
