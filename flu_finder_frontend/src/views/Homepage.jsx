@@ -5,7 +5,7 @@ const Homepage = () => {
   const [status, setStatus] = useState("Fetching data...");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/api/fetch-data")
+    fetch("http://127.0.0.1:5000/api/cdc/data")
       .then((response) => response.json())
       .then((data) => setStatus(data.status))
       .catch((error) => console.error("Error fetching data:", error));

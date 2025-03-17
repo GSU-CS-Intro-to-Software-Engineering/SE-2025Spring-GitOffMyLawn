@@ -33,7 +33,7 @@ def get_sorted_dataframe():
     df = pl.read_csv(download_path, try_parse_dates=True)
 
     # Convert "Outbreak Date" to Date type and sort
-    df_sorted = df.with_columns(pl.col("Outbreak Date").str.strptime(pl.Date, "%m-%d-%Y")).sort("Outbreak Date")
+    df_sorted = df.with_columns(pl.col("Outbreak Date").str.strptime(pl.Date, "%m/%d/%Y")).sort("Outbreak Date")
     df_sorted = df_sorted.with_row_index("index")
 
     # Configure Polars to display all rows
