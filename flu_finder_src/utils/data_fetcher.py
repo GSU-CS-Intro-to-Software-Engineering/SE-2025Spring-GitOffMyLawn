@@ -32,8 +32,8 @@ def get_sorted_dataframe():
     # Load the CSV into Polars
     df = pl.read_csv(download_path, try_parse_dates=True)
 
-    # Convert "Outbreak Date" to Date type and sort
-    df_sorted = df.with_columns(pl.col("Outbreak Date").str.strptime(pl.Date, "%m/%d/%Y")).sort("Outbreak Date")
+    # Convert "Outbreak Date" to Date type and sort. Changes format to month/date/year
+    df_sorted = df.with_columns(pl.col("Outbreak Date").str.strptime(pl.Date, "%m/%d/%Y")).sort("Outbreak Date").with_columns(pl.col("Outbreak Date").dt.strftime("%m/%d/%Y"))
     df_sorted = df_sorted.with_row_index("index")
 
     # Configure Polars to display all rows
@@ -41,3 +41,7 @@ def get_sorted_dataframe():
 
     """Returns the loaded DataFrame."""
     return df_sorted
+
+# UNCOMMENT THESE TO PRINT IN CONSOLE
+# download_csv()
+# print(get_sorted_dataframe())
