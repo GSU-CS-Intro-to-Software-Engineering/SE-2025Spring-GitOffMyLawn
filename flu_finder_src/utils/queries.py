@@ -1,5 +1,5 @@
 import polars as pl
-from flu_finder_src.utils.data_fetcher import get_sorted_dataframe
+from data_fetcher import get_sorted_dataframe
 
 df = get_sorted_dataframe()
 
