@@ -11,7 +11,7 @@ def filter_by_state(state: str):
 
 # Get total outbreaks by State
 def total_outbreaks_by_state(state: str):
-    return filter_by_state(state).height
+    return filter_by_state(state).size
 
 # Get total flock size by State
 def total_flock_size_by_state(state: str):
@@ -33,7 +33,7 @@ def filter_by_county(county: str, state: str):
 
 # Get total outbreaks by County
 def total_outbreaks_by_county(county: str, state: str):
-    return filter_by_county(county, state).height
+    return filter_by_county(county, state).size
 
 # Get total flock size by County
 def total_flock_size_by_county(county: str, state: str):
@@ -60,13 +60,11 @@ def get_country_summary():
 
 #------------------------------------------- Method Testing -----------------------------------------#
 if __name__ == "__main__":
-    # print(filter_by_state("Georgia"))
     temp_df = filter_by_state("Georgia")
-    print(tabulate(temp_df, headers='keys', tablefmt='psql'))
-    # print(total_outbreaks_by_state("Georgia"))
-    # print(total_flock_size_by_state("Georgia"))
-    # print(get_state_summary("Georgia"))
-    # print(get_country_summary())
+    print(total_outbreaks_by_state("Georgia"))
+    # temp_df = total_flock_size_by_state("Georgia")
+    # temp_df = get_state_summary("Georgia")
+    # temp_df = get_country_summary()
 
 
-# print(filter_by_state("Ohio"))
+print(tabulate(temp_df, headers="keys", tablefmt="simple_outline"))
