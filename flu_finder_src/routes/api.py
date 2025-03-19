@@ -16,7 +16,7 @@ def fetch_data():
 @api_bp.route('/country/data', methods=['GET'])
 def country_data():
     try:
-        summary = queries.get_country_summary()
+        summary = queries.get_USA_summary()
 
         return jsonify({
             'status': 'success',
