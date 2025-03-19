@@ -1,7 +1,7 @@
 import os
 import sys
 import requests
-import polars as pl
+import pandas as pd
 from dotenv import load_dotenv
 
 # CSV URL
@@ -31,18 +31,24 @@ def download_csv():
         sys.exit()
 
 def get_sorted_dataframe():
-    # Load the CSV into Polars
-    df = pl.read_csv(download_path, try_parse_dates=True)
-
-    # Convert "Outbreak Date" to Date type and sort. Changes format to month/date/year
-    df_sorted = df.with_columns(pl.col("Outbreak Date").str.strptime(pl.Date, "%m-%d-%Y")).sort("Outbreak Date").with_columns(pl.col("Outbreak Date").dt.strftime("%m/%d/%Y"))
-    df_sorted = df_sorted.with_row_index("index")
-
-    # Configure Polars to display all rows
-    pl.Config.set_tbl_rows(len(df_sorted))
-
-    """Returns the loaded DataFrame."""
+    # Load the CSV into Pandas
+    df = pd.read_csv(download_path)
+    
+    # Convert "Outbreak Date" to datetime using the format "%m-%d-%Y" and sort the DataFrame
+    df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"], format="%m-%d-%Y")
+    df_sorted = df.sort_values("Outbreak Date").copy()
+    
+    # Change the "Outbreak Date" format to "MM/DD/YYYY"
+    df_sorted["Outbreak Date"] = df_sorted["Outbreak Date"].dt.strftime("%m/%d/%Y")
+    
+    # Reset the index and store the old index in a column named "index"
+    df_sorted.reset_index(inplace=True)
+    
+    # Configure Pandas to display all rows
+    pd.set_option("display.max_rows", len(df_sorted))
+    
     return df_sorted
+
 
 # UNCOMMENT THESE TO PRINT IN CONSOLE
 # download_csv()

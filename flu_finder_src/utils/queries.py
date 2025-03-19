@@ -1,4 +1,5 @@
-import polars as pl
+import pandas as pd
+from tabulate import tabulate
 from data_fetcher import get_sorted_dataframe
 
 df = get_sorted_dataframe()
@@ -6,7 +7,7 @@ df = get_sorted_dataframe()
 #------------------------------------------- State Methods -----------------------------------------#
 # Filter cases by State
 def filter_by_state(state: str):
-    return df.filter(pl.col("State") == state)
+    return df[df["State"] == state]
 
 # Get total outbreaks by State
 def total_outbreaks_by_state(state: str):
@@ -28,7 +29,7 @@ def get_state_summary(state: str):
  #------------------------------------------- County Methods -----------------------------------------#
  # Filter cases by County
 def filter_by_county(county: str, state: str):
-    return df.filter(pl.col("County") == county, pl.col("State") == state)
+    return df.filter([df["County"] == county], [df["State"] == state])
 
 # Get total outbreaks by County
 def total_outbreaks_by_county(county: str, state: str):
@@ -59,8 +60,13 @@ def get_country_summary():
 
 #------------------------------------------- Method Testing -----------------------------------------#
 if __name__ == "__main__":
-    print(filter_by_state("Georgia"))
+    # print(filter_by_state("Georgia"))
+    temp_df = filter_by_state("Georgia")
+    print(tabulate(temp_df, headers='keys', tablefmt='psql'))
     # print(total_outbreaks_by_state("Georgia"))
     # print(total_flock_size_by_state("Georgia"))
     # print(get_state_summary("Georgia"))
     # print(get_country_summary())
+
+
+# print(filter_by_state("Ohio"))
