@@ -5,10 +5,19 @@ from data_fetcher import get_sorted_dataframe
 df = get_sorted_dataframe()
 
 #------------------------------------------- Country Methods -----------------------------------------#
-# Get summary for Country
-def get_country_summary():
-    total_outbreaks = len(df)
-    total_flock_size = df["Flock Size"].sum()
+
+# Get total outbreaks in the US
+def total_outbreaks_USA():
+    return len(df)
+
+# Get total flock size in the US
+def total_flock_size_USA():
+    return df["Flock Size"].sum()
+
+# Get summary for the US
+def get_USA_summary():
+    total_outbreaks = total_outbreaks_USA()
+    total_flock_size = total_flock_size_USA()
     return {
         "outbreaks": f"{total_outbreaks:,}",
         "flock_size": f"{total_flock_size:,}"
@@ -63,7 +72,10 @@ def get_county_summary(county: str, state: str):
 #------------------------------------------- Method Testing -----------------------------------------#
 if __name__ == "__main__":
     # --- COUNTRY METHODS ---
-    print(get_country_summary())
+    # print(tabulate(df, headers="keys", tablefmt="simple_outline"))
+    # print(total_outbreaks_USA())
+    # print(total_flock_size_USA())
+    print(get_USA_summary())
     
     # --- STATE METHODS ---
     # print(tabulate(filter_by_state("Georgia"), headers="keys", tablefmt="simple_outline"))
