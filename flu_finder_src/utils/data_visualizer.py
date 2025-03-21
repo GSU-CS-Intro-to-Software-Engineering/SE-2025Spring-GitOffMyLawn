@@ -8,7 +8,7 @@ df = get_sorted_dataframe()
 # #! Make sure you replace Ohio with sorted dataframe
 # df = filter_by_state("Ohio")
 
-def line_graph_maker(start, end, unit, *args):
+def set_time_frame(start, end, unit, *args):
     # Note: arguments not case-sensitive (.title())
     
     # Nation specific
@@ -29,13 +29,14 @@ def line_graph_maker(start, end, unit, *args):
     # County specific
     elif len(args) > 1:
         county = filter_by_county((args[1].title()), (args[0].title()))
-        print(tabulate(county, headers="keys", tablefmt="simple_outline"))
+        frame = get_time_frame(county, start, end)
+        print(tabulate(frame, headers="keys", tablefmt="simple_outline"))
         # Unit displayed with x-axis tick mark spacing
         # TODO: Implement graph build
     
 
 #------------------------------------------- Method Testing -----------------------------------------#
 if __name__ == "__main__":
-    # line_graph_maker("2025", "2030", "seconds")
-    # line_graph_maker("2025-01-01", "2025-02-01", "seconds", "Georgia")
-    line_graph_maker("2020", "2030", "seconds", "ioWA", "BUENA VistA")
+    # set_time_frame("2025", "2030", "seconds")                           # <== National
+    # set_time_frame("2025-01-01", "2025-02-01", "seconds", "Georgia")    # <== State
+    set_time_frame("2024", "2030", "seconds", "ioWA", "BUENA VistA")    # <== County

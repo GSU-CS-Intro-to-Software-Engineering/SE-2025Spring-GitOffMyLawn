@@ -31,26 +31,6 @@ def download_csv():
         print("Couldn't download CSV")
         sys.exit()
 
-# def get_sorted_dataframe():
-#     # Load the CSV into Pandas
-#     df = pd.read_csv(download_path)
-    
-#     # Convert "Outbreak Date" to datetime using the format "%m-%d-%Y" and sort the DataFrame
-#     df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"]).dt.strftime("%m-%d-%Y")
-#     df_sorted = df.sort_values("Outbreak Date").copy()
-
-    
-#     # Set the index to the sorted dataframe's order
-#     df_sorted = df.sort_values("Outbreak Date").reset_index(drop=True)
-#     df_sorted.index.name = "Index"
-
-    
-#     # Configure Pandas to display all rows
-#     pd.set_option("display.max_rows", len(df_sorted))
-    
-#     return df_sorted
-
-
 def get_sorted_dataframe():
     df = pd.read_csv(download_path)
     df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"], format="%m-%d-%Y")
@@ -58,8 +38,6 @@ def get_sorted_dataframe():
     df_sorted.index.name = "Index"
     pd.set_option("display.max_rows", len(df_sorted))
     return df_sorted
-
-
 
 
 # UNCOMMENT THESE TO PRINT IN CONSOLE

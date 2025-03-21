@@ -78,8 +78,6 @@ def get_time_frame(df, start, end):
     mask = (df['Outbreak Date'] >= start) & (df['Outbreak Date'] <= end)
     return df.loc[mask]
 
-
-
 #------------------------------------------- Method Testing -----------------------------------------#
 if __name__ == "__main__":
     # --- COUNTRY METHODS ---
