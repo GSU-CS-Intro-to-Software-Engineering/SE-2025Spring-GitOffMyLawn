@@ -4,20 +4,20 @@ from data_fetcher import get_sorted_dataframe
 
 df = get_sorted_dataframe()
 
-#------------------------------------------- Country Methods -----------------------------------------#
+#------------------------------------------- National Methods -----------------------------------------#
 
 # Get total outbreaks in the US
-def total_outbreaks_USA():
+def total_outbreaks_national():
     return len(df)
 
 # Get total flock size in the US
-def total_flock_size_USA():
+def total_flock_size_national():
     return df["Flock Size"].sum()
 
 # Get summary for the US
-def get_USA_summary():
-    total_outbreaks = total_outbreaks_USA()
-    total_flock_size = total_flock_size_USA()
+def get_national_summary():
+    total_outbreaks = total_outbreaks_national()
+    total_flock_size = total_flock_size_national()
     return {
         "outbreaks": f"{total_outbreaks:,}",
         "flock_size": f"{total_flock_size:,}"
@@ -70,19 +70,23 @@ def get_county_summary(county: str, state: str):
 
 #------------------------------------------- General Methods -----------------------------------------#
 # Find values in a given a date range (df can be a subset of the full dataframe)
+# Note: to get the full frame, either use the filter_by_ method, or set the start year to 1000 and the end year to 4000
+# You also don't need specific dates. You can just input the year (ex: start=2025, end=2026 returns from start of 2025)
 def get_time_frame(df, start, end):
+    df = df.copy()
     df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"])
     mask = (df['Outbreak Date'] >= start) & (df['Outbreak Date'] <= end)
     return df.loc[mask]
 
 
+
 #------------------------------------------- Method Testing -----------------------------------------#
 if __name__ == "__main__":
     # --- COUNTRY METHODS ---
-    # print(tabulate(df, headers="keys", tablefmt="simple_outline"))
-    # print(total_outbreaks_USA())
-    # print(total_flock_size_USA())
-    # print(get_USA_summary())
+    print(tabulate(df, headers="keys", tablefmt="simple_outline"))
+    # print(total_outbreaks_national())
+    # print(total_flock_size_national())
+    # print(get_national_summary())
     
     # --- STATE METHODS ---
     # print(tabulate(filter_by_state("Georgia"), headers="keys", tablefmt="simple_outline"))
@@ -97,4 +101,4 @@ if __name__ == "__main__":
     # print(get_county_summary("Elbert", "Georgia"))
     
     # --- GENERAL METHODS ---
-    print(tabulate(get_time_frame(df, "03/01/2025", "03/21/2025"), headers="keys", tablefmt="simple_outline"))
+    # print(tabulate(get_time_frame(df, "03/01/2025", "03/21/2025"), headers="keys", tablefmt="simple_outline"))

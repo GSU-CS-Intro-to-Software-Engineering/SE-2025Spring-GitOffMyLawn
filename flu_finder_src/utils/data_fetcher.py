@@ -56,8 +56,6 @@ def get_sorted_dataframe():
     df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"], format="%m-%d-%Y")
     df_sorted = df.sort_values("Outbreak Date").reset_index(drop=True)
     df_sorted.index.name = "Index"
-    # Convert the "Outbreak Date" column to a string with the desired format
-    df_sorted["Outbreak Date"] = df_sorted["Outbreak Date"].dt.strftime("%m/%d/%Y")
     pd.set_option("display.max_rows", len(df_sorted))
     return df_sorted
 
