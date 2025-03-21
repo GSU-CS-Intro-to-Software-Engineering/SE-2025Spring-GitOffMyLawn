@@ -45,8 +45,8 @@ def get_state_summary(state: str):
         "flock_size": f"{flock_size:,}"
     }
 
- #------------------------------------------- County Methods -----------------------------------------#
- # Filter cases by County
+#------------------------------------------- County Methods -----------------------------------------#
+# Filter cases by County
 def filter_by_county(county: str, state: str):
     return df[(df["County"] == county) & (df["State"] == state)]
 
@@ -68,6 +68,13 @@ def get_county_summary(county: str, state: str):
         "flock_size": f"{flock_size:,}"
     }
 
+#------------------------------------------- General Methods -----------------------------------------#
+# Find values in a given a date range (df can be a subset of the full dataframe)
+def get_time_frame(df, start, end):
+    df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"])
+    mask = (df['Outbreak Date'] >= start) & (df['Outbreak Date'] <= end)
+    return df.loc[mask]
+
 
 #------------------------------------------- Method Testing -----------------------------------------#
 if __name__ == "__main__":
@@ -75,7 +82,7 @@ if __name__ == "__main__":
     # print(tabulate(df, headers="keys", tablefmt="simple_outline"))
     # print(total_outbreaks_USA())
     # print(total_flock_size_USA())
-    print(get_USA_summary())
+    # print(get_USA_summary())
     
     # --- STATE METHODS ---
     # print(tabulate(filter_by_state("Georgia"), headers="keys", tablefmt="simple_outline"))
@@ -88,3 +95,6 @@ if __name__ == "__main__":
     # print(total_outbreaks_by_county("Elbert", "Georgia"))
     # print(total_flock_size_by_county("Elbert", "Georgia"))
     # print(get_county_summary("Elbert", "Georgia"))
+    
+    # --- GENERAL METHODS ---
+    print(tabulate(get_time_frame(df, "03/01/2025", "03/21/2025"), headers="keys", tablefmt="simple_outline"))
