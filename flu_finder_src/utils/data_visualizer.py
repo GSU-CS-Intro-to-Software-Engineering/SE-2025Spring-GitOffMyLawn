@@ -71,7 +71,7 @@ def line_graph_maker(df):
     # Override default tooltip format (no scientific notation)
     ax.format_coord = format_coord
     
-    cursor = mplcursors.cursor(scatter, hover=True)
+    cursor = mplcursors.cursor(scatter, hover=mplcursors.HoverMode(2))
     @cursor.connect("add")
     def on_add(sel):
         x = mdates.num2date(sel.target[0]).strftime('%m-%d-%Y')
@@ -87,6 +87,7 @@ def line_graph_maker(df):
         
         # Remove the arrow
         sel.annotation.arrow_patch.set_visible(False)
+        sel.annotation.set_visible(True)
         
         # Dynamic color changes, changes box color depending on flock size (optional)
         # if sel.target[1] > 500000:
