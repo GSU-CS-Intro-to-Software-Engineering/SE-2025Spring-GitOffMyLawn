@@ -1,38 +1,57 @@
-# import polars as pl
-# import matplotlib.pyplot as plt, mpld3
-# # import matplotlib.dates as mdates
-# from matplotlib.dates import MonthLocator, DateFormatter
-# from mpld3 import plugins
-# # from data_fetcher import get_sorted_dataframe
-# from queries import *
+import pandas as pd
+import plotly.express as px
+from data_fetcher import get_sorted_dataframe
+from queries import *
 
-# # df = get_sorted_dataframe()
-# #! Make sure you replace Ohio with sorted dataframe
-# df = filter_by_state("Ohio")
+df = get_sorted_dataframe()
 
-# df = df.with_columns(pl.col("Outbreak Date").str.strptime(pl.Date, "%m/%d/%Y"))
+def line_graph_maker(df, output_file="outbreak_plot.html"):
+    if df.empty:
+        print("No data to plot. Check your date range and filters.")
+        return
 
-# fig, ax = plt.subplots(figsize=(10,6), dpi=50)
-# ax.scatter(
-#     x=df["Outbreak Date"],
-#     y=df["Flock Size"]
-# )
-# ax.set_title("Number of Outbreaks Over Time")
-# ax.set_xlabel("Outbreak Date")
-# ax.set_ylabel("Flock Size")
+    df = df.copy()
+    df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"])
 
-# # Sets the default position to years (ticks separated every 3 months)
-# ax.xaxis.set_major_locator(MonthLocator(bymonth=[1,4,7,10]))
-# ax.xaxis.set_major_formatter(DateFormatter('%m/%Y'))
-# fig.autofmt_xdate()
+    fig = px.line(
+        df,
+        x="Outbreak Date",
+        y="Flock Size",
+        title="Outbreak Flock Size Over Time",
+        markers=True,
+        labels={"Outbreak Date": "Outbreak Date", "Flock Size": "Flock Size"},
+        color_discrete_sequence=["dodgerblue"]
+    )
 
-# # plt.ticklabel_format(style="plain")
+    # Tooltip formatting (optional customization)
+    fig.update_traces(
+        marker=dict(size=6, color='blue', line=dict(width=1, color='black')),
+        hovertemplate="Date: %{x|%m-%d-%Y}<br>Size: %{y:,}"
+    )
 
-# # Enable mpld3's scroll functionality by default
-# mpld3.plugins.clear(fig)
-# plugins.connect(fig, plugins.Reset(), plugins.MousePosition())
+    # Improve layout
+    fig.update_layout(
+        xaxis_title="Outbreak Date",
+        yaxis_title="Flock Size",
+        title_x=0.5,
+        hoverlabel=dict(bgcolor="white", font_size=12),
+        template="plotly_white"
+    )
+
+    # Save to HTML
+    fig.write_html(output_file)
+    print(f"Plot saved to {output_file}")
 
 
-# # Creates html of the graph
-# mpld3.save_html(fig=fig, fileobj="output.html")
-
+#------------------------------------------- Method Testing -----------------------------------------#
+if __name__ == "__main__":
+    frame = set_time_frame("2022", "2030")                           # <== National
+    # frame = set_time_frame("2025-01-01", "2025-02-01", "Georgia")    # <== State
+    # frame = set_time_frame("2024", "2030", "ioWA", "BUENA VistA")    # <== County
+    summed_frame = sum_by_date(frame)
+    line_graph_maker(summed_frame)
+    
+    # TEST: sum in given time frame
+    # frame = set_time_frame("2025-01-13", "2025-01-14")
+    # print(sum_by_date(frame))
+    # print(tabulate(frame, headers="keys", tablefmt="simple_outline"))
