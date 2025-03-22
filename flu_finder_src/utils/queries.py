@@ -78,6 +78,13 @@ def get_time_frame(df, start, end):
     mask = (df['Outbreak Date'] >= start) & (df['Outbreak Date'] <= end)
     return df.loc[mask]
 
+# Should be used in graph visualizations (sums flock sizes that occur on the same date)
+def sum_by_date(df):
+    df = df.copy()
+    df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"], errors='coerce')
+    grouped = df.groupby("Outbreak Date", as_index=False)["Flock Size"].sum()
+    return grouped
+
 #------------------------------------------- Method Testing -----------------------------------------#
 if __name__ == "__main__":
     # --- COUNTRY METHODS ---
@@ -100,3 +107,4 @@ if __name__ == "__main__":
     
     # --- GENERAL METHODS ---
     # print(tabulate(get_time_frame(df, "03/01/2025", "03/21/2025"), headers="keys", tablefmt="simple_outline"))
+    # print(tabulate(sum_by_date(get_time_frame(df, "03/01/2025", "03/21/2025")), headers="keys", tablefmt="simple_outline"))
