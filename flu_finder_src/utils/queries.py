@@ -69,7 +69,7 @@ def get_county_summary(county: str, state: str):
     }
 
 #------------------------------------------- General Methods -----------------------------------------#
-# Find values in a given a date range (df can be a subset of the full dataframe)
+# Returns subset of main dataframe based on Outbreak Date range
 # Note: to get the full frame, either use the filter_by_ method, or set the start year to 1000 and the end year to 4000
 # You also don't need specific dates. You can just input the year (ex: start=2025, end=2026 returns from start of 2025)
 def get_time_frame(df, start, end):
@@ -77,6 +77,20 @@ def get_time_frame(df, start, end):
     df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"])
     mask = (df['Outbreak Date'] >= start) & (df['Outbreak Date'] <= end)
     return df.loc[mask]
+
+# Select size of scope (national, state, or county). Case insensitive
+def set_time_frame(start, end, *args):
+    # National
+    if len(args) < 1:
+        return get_time_frame(df, start, end)
+    # State
+    elif len(args) == 1:
+        state = filter_by_state(args[0].title())
+        return get_time_frame(state, start, end)
+    # County
+    elif len(args) > 1:
+        county = filter_by_county(args[1].title(), args[0].title())
+        return get_time_frame(county, start, end)
 
 # Should be used in graph visualizations (sums flock sizes that occur on the same date)
 def sum_by_date(df):

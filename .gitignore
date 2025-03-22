@@ -19,6 +19,7 @@ data.csv
 flu_finder_src/data.csv
 .env
 __pycache__/
+outbreak_plot.html
 
 # Editor directories and files
 .vscode/*
