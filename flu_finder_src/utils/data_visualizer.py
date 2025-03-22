@@ -3,10 +3,10 @@ from tabulate import tabulate
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import mplcursors
+import mpld3
 from data_fetcher import get_sorted_dataframe
 from queries import *
 
-#! If you make a method to get summed overlaps, replace df with that
 df = get_sorted_dataframe()
 df_summed = sum_by_date(df)
 
@@ -41,13 +41,14 @@ def line_graph_maker(df):
     df = df.copy()
     df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"], errors='coerce')
 
-    fig, ax = plt.subplots(figsize=(10, 6), dpi=128)
+    # fig, ax = plt.subplots(figsize=(10, 6), dpi=128)
+    fig, ax = plt.subplots(figsize=(10, 6), dpi=65)
 
-    # Plot data
-    ax.plot(df["Outbreak Date"], df["Flock Size"], linestyle='-', marker='o', markersize=6, markerfacecolor='blue', markeredgecolor='black', linewidth=2, color='dodgerblue', alpha=0.8)
+    # Plot data + lines
+    ax.plot(df["Outbreak Date"], df["Flock Size"], linestyle='-', marker='o', markersize=5, markerfacecolor='blue', markeredgecolor='black', linewidth=2, color='dodgerblue', alpha=0.9)
     
-    # Scatter only for dots, stored in variable
-    scatter = ax.scatter(df["Outbreak Date"], df["Flock Size"], color='blue', edgecolor='black', zorder=3)
+    # Scatter only for points (used by mplcursors)
+    scatter = ax.scatter(df["Outbreak Date"], df["Flock Size"], cmap='coolwarm', edgecolor='black', zorder=3)
 
     # Format x-axis (dates)
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%d-%Y'))
@@ -99,12 +100,13 @@ def line_graph_maker(df):
 
 
     plt.tight_layout()
-    plt.show()
+    # plt.show()
+    mpld3.show(fig)
     
 
 #------------------------------------------- Method Testing -----------------------------------------#
 if __name__ == "__main__":
-    frame = set_time_frame("2025", "2030")                           # <== National
+    frame = set_time_frame("2022", "2030")                           # <== National
     # frame = set_time_frame("2025-01-01", "2025-02-01", "Georgia")    # <== State
     # frame = set_time_frame("2024", "2030", "ioWA", "BUENA VistA")    # <== County
     summed_frame = sum_by_date(frame)
