@@ -37,17 +37,20 @@ def line_graph_maker(df, output_file="outbreak_plot.html"):
         hoverlabel=dict(bgcolor="white", font_size=12),
         template="plotly_white"
     )
+    
+    # Scroll wheel zoom and always visible modebar
+    config = {"displayModeBar": True, "scrollZoom": True}
 
     # Save to HTML
-    fig.write_html(output_file)
+    fig.write_html(output_file, config=config)
     print(f"Plot saved to {output_file}")
 
 
 #------------------------------------------- Method Testing -----------------------------------------#
 if __name__ == "__main__":
-    frame = set_time_frame("2022", "2030")                           # <== National
+    # frame = set_time_frame("2022", "2030")                           # <== National
     # frame = set_time_frame("2025-01-01", "2025-02-01", "Georgia")    # <== State
-    # frame = set_time_frame("2024", "2030", "ioWA", "BUENA VistA")    # <== County
+    frame = set_time_frame("2024", "2030", "ioWA", "BUENA VistA")    # <== County
     summed_frame = sum_by_date(frame)
     line_graph_maker(summed_frame)
     
