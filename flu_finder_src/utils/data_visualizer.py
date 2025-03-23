@@ -36,7 +36,8 @@ def bar_graph_maker(df, output_file="outbreak_plot.html"):
         title_x=0.5,
         hoverlabel=dict(bgcolor="white", font_size=12),
         template="plotly_white",
-        dragmode="pan"
+        dragmode="pan",
+        bargap=0.1
     )
     
     # Scroll wheel zoom and always visible modebar
