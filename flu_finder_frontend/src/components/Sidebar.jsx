@@ -1,5 +1,5 @@
 // src/components/Sidebar.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   List,
@@ -7,6 +7,7 @@ import {
   ListItemText,
   ListItemIcon,
   Switch,
+  Typography,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import MapIcon from "@mui/icons-material/Room";
@@ -14,6 +15,15 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import palette from "../theme/palette";
 
 const Sidebar = () => {
+  const [status, setStatus] = useState("Fetching data...");
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:5000/api/cdc/data")
+      .then((response) => response.json())
+      .then((data) => setStatus(data.status))
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
+
   return (
     <Box
       sx={{
@@ -23,10 +33,14 @@ const Sidebar = () => {
         color: palette.textPrimary,
         padding: "20px",
         position: "fixed",
-        top: "60px", // Starts below the navbar
+        top: "60px",
         left: 0,
       }}
     >
+      <Typography variant="h6" fontWeight="bold">
+        Flu Finder Frontend
+      </Typography>
+      <Typography variant="body1">Backend Response: {status}</Typography>
       <h2>Quick Access</h2>
       <List>
         <ListItem button>
@@ -42,19 +56,7 @@ const Sidebar = () => {
           <ListItemText primary="Interactive Map" />
         </ListItem>
         <ListItem>
-          <ListItemText primary="Wild Birds" />
-          <Switch defaultChecked color="primary" />
-        </ListItem>
-        <ListItem>
           <ListItemText primary="Domestic Poultry" />
-          <Switch defaultChecked color="primary" />
-        </ListItem>
-        <ListItem>
-          <ListItemText primary="Dairy Cows" />
-          <Switch defaultChecked color="primary" />
-        </ListItem>
-        <ListItem>
-          <ListItemText primary="Humans" />
           <Switch defaultChecked color="primary" />
         </ListItem>
         <ListItem button>

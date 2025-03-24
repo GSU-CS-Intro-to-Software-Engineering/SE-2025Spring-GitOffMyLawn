@@ -34,7 +34,7 @@ const Navbar = () => {
           backgroundColor: "white",
           borderRadius: "20px",
           padding: "5px 10px",
-          width: "250px",
+          width: "750px",
           marginLeft: "20%",
           marginRight: "20px",
         }}
