@@ -31,3 +31,6 @@ outbreak_plot.html
 *.njsproj
 *.sln
 *.sw?
+
+# Google
+google_backend.json
