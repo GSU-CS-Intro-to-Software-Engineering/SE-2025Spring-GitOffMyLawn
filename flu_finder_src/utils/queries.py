@@ -1,6 +1,6 @@
 import pandas as pd
 from tabulate import tabulate
-from data_fetcher import get_sorted_dataframe
+from .data_fetcher import get_sorted_dataframe
 
 df = get_sorted_dataframe()
 
@@ -106,19 +106,19 @@ if __name__ == "__main__":
     # print(total_outbreaks_national())
     # print(total_flock_size_national())
     # print(get_national_summary())
-    
+
     # --- STATE METHODS ---
     # print(tabulate(filter_by_state("Georgia"), headers="keys", tablefmt="simple_outline"))
     # print(total_outbreaks_by_state("Georgia"))
     # print(total_flock_size_by_state("Georgia"))
     # print(get_state_summary("Georgia"))
-    
+
     # --- COUNTY METHODS ---
     # print(tabulate(filter_by_county("Elbert", "Georgia"), headers="keys", tablefmt="simple_outline"))
     # print(total_outbreaks_by_county("Elbert", "Georgia"))
     # print(total_flock_size_by_county("Elbert", "Georgia"))
     # print(get_county_summary("Elbert", "Georgia"))
-    
+
     # --- GENERAL METHODS ---
     # print(tabulate(get_time_frame(df, "03/01/2025", "03/21/2025"), headers="keys", tablefmt="simple_outline"))
     # print(tabulate(sum_by_date(get_time_frame(df, "03/01/2025", "03/21/2025")), headers="keys", tablefmt="simple_outline"))
