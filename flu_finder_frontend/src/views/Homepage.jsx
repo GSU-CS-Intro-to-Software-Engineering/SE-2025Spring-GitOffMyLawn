@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
+import { useEnv } from "vite-plugin-env-compatible";
+
 
 const Homepage = () => {
   const [status, setStatus] = useState("Fetching data...");
+  const backendUrl = useEnv("VITE_BACKEND_URL");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/api/cdc/data")
+    fetch(`${backendUrl}/api/cdc/data`)
       .then((response) => response.json())
       .then((data) => setStatus(data.status))
       .catch((error) => console.error("Error fetching data:", error));
