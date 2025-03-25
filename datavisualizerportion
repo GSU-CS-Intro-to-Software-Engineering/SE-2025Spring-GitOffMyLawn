@@ -5,8 +5,16 @@ from queries import *
 
 df = get_sorted_dataframe()
 
+def get_location_label(state=None, county=None):
+    if state and county:
+        return f"County: {county.title()}, {state.title()}"
+    elif state:
+        return f"State: {state.title()}"
+    else:
+        return "National"
 
-def bar_graph_maker(df, output_file="outbreak_plot.html"):
+
+def bar_graph_maker(df, output_file="outbreak_plot.html", location_info="National"):
     if df.empty:
         print("No data to plot. Check your date range and filters.")
         return
@@ -18,7 +26,7 @@ def bar_graph_maker(df, output_file="outbreak_plot.html"):
         df,
         x="Outbreak Date",
         y="Flock Size",
-        title="Outbreak Flock Size Over Time",
+        title="Outbreak Flock Size Over Time - {location_info}",
         labels={"Outbreak Date": "Outbreak Date", "Flock Size": "Flock Size"},
         color_discrete_sequence=["dodgerblue"]
     )
@@ -51,7 +59,7 @@ def bar_graph_maker(df, output_file="outbreak_plot.html"):
 
 
 
-def line_graph_maker(df, output_file="outbreak_plot.html"):
+def line_graph_maker(df, output_file="outbreak_plot.html", location_info="National"):
     if df.empty:
         print("No data to plot. Check your date range and filters.")
         return
@@ -63,7 +71,7 @@ def line_graph_maker(df, output_file="outbreak_plot.html"):
         df,
         x="Outbreak Date",
         y="Flock Size",
-        title="Outbreak Flock Size Over Time",
+        title="Outbreak Flock Size Over Time = {location_info}",
         markers=True,
         labels={"Outbreak Date": "Outbreak Date", "Flock Size": "Flock Size"},
         color_discrete_sequence=["dodgerblue"]
@@ -97,14 +105,18 @@ def line_graph_maker(df, output_file="outbreak_plot.html"):
 
 #------------------------------------------- Method Testing -----------------------------------------#
 if __name__ == "__main__":
-    frame = set_time_frame("2022", "2030")                           # <== National
-    # frame = set_time_frame("2025-01-01", "2025-02-01", "Georgia")    # <== State
-    # frame = set_time_frame("2024", "2030", "ioWA", "BUENA VistA")    # <== County
+    # Testing with National Data
+    frame = set_time_frame("2022", "2030")
+    location_label = get_location_label()
+
+    # Testing with State Data
+    # frame = set_time_frame("2025-01-01", "2025-02-01", "Georgia")
+    # location_label = get_location_label("Georgia")
+
+    # Testing with County Data
+    # frame = set_time_frame("2024", "2030", "Iowa", "Buena Vista")
+    # location_label = get_location_label("Iowa", "Buena Vista")
+
     summed_frame = sum_by_date(frame)
-    bar_graph_maker(summed_frame)
-    # line_graph_maker(summed_frame)
-    
-    # TEST: sum in given time frame
-    # frame = set_time_frame("2025-01-13", "2025-01-14")
-    # print(sum_by_date(frame))
-    # print(tabulate(frame, headers="keys", tablefmt="simple_outline"))
+    bar_graph_maker(summed_frame, location_info=location_label)
+    # line_graph_maker(summed_frame, location_info=location_label)
