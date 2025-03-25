@@ -12,7 +12,7 @@ const Homepage = () => {
       .then((response) => response.json())
       .then((data) => setStatus(data.status))
       .catch((error) => console.error("Error fetching data:", error));
-  }, []);
+  }, [backendUrl]);
 
   return (
     <div
