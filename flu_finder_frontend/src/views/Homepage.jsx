@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
-import { useEnv } from "vite-plugin-env-compatible";
-
 
 const Homepage = () => {
   const [status, setStatus] = useState("Fetching data...");
-  const backendUrl = useEnv("VITE_BACKEND_URL");
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
     fetch(`${backendUrl}/api/cdc/data`)
