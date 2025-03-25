@@ -28,6 +28,14 @@ Git installed → Check by running:
   git --version
 ```
 
+Node.js & npm (for frontend development) → Check by running:
+
+```bash
+  node -v
+  npm -v
+
+```
+
 ## Setting Up the project
 
 1. **Clone the repository**
@@ -36,6 +44,8 @@ Git installed → Check by running:
 ```bash
   git clone https://github.com/GSU-CS-Intro-to-Software-Engineering/SE-2025Spring-GitOffMyLawn.git
 ```
+
+## Backend Setup
 
 2. **Create and activate a virtual environment**
 
@@ -47,6 +57,8 @@ flu_finder_venv\Scripts\Activate     # For Windows (PowerShell)
 
 3. **Install dependencies**
 
+(Includes Flask, Flask-CORS, and database dependencies)
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -56,12 +68,13 @@ pip install -r requirements.txt
 
 ```bash
 DATABASE_URL=your_postgres_url_here
+DOWNLOAD_PATH=flu_finder_src/data.csv
 ```
 
 5. **Test the database connection**
 
 ```bash
-python -c "from db import test_query; test_query()"
+python -c "from flu_finder_src.db import test_query; test_query()"
 ```
 
 If successful, you should see:
@@ -74,14 +87,52 @@ Database time: YYYY-MM-DD HH:MM:SS+00:00
 6. **Fetching the Latest CDC Data**
 
 Before running queries, you need to **fetch the latest data** from the CDC.
-The script `data_fetcher.py` downloads and saves the dataset as a local `data.csv` file in the root of the project.
-
-### **How to Run `data_fetcher.py`**
-
-From the root directory run:
-
-```bash
-python flu_finder_src/utils/data_fetcher.py
-```
+The script `data_fetcher.py` downloads and saves the dataset as a local `data.csv` file inside of the `flu_finder_src` folder.
 
 Your data should now be up to date from the CDC.
+
+### **Running the Backend API**
+
+To start the Flask backend, run:
+
+```bash
+python flu_finder_src/app.py
+```
+
+This will start the backend on:
+
+➡ http://127.0.0.1:5000/
+
+## Frontend Setup (React + Vite)
+
+⚠️ **Make sure the backend is running before testing frontend API calls.**
+
+1. **Navigate to the Frontend Folder**
+
+```bash
+cd flu_finder_frontend
+```
+
+2. **Install Dependencies**
+
+```bash
+npm install
+```
+
+3. **Run the Development Server**
+
+```bash
+npm run dev
+```
+
+This will start the React app, and you can access it at:
+➡ http://localhost:5173/
+
+## Additional Notes
+
+This project uses Vite for the frontend, which provides fast hot module replacement (HMR) and optimized builds.
+If you need to expand the ESLint configuration, check out:
+
+[@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md)
+
+[@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc/blob/main/README.md)

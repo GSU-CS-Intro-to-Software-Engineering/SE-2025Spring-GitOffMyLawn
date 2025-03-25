@@ -1,8 +1,8 @@
 import os
 import sys
 import requests
-import getpass
-import polars as pl
+import pandas as pd
+from tabulate import tabulate
 from dotenv import load_dotenv
 
 # CSV URL
@@ -12,34 +12,34 @@ csv_url = "https://www.cdc.gov/bird-flu/modules/situation-summary/commercial-bac
 load_dotenv()
 
 # Get download path from .env (default to project root if not set)
-download_path = os.getenv("DOWNLOAD_PATH", os.path.join(os.getcwd(), "data.csv"))
+# Updated to have an absolute path for download
+env_path = os.getenv("DOWNLOAD_PATH")
+script_dir = os.path.dirname(os.path.abspath(__file__)) # Get absolute path of current file
+project_root = os.path.abspath(os.path.join(script_dir, "..", "..")) # Go up 2 directories (to the root)
+download_path = os.path.join(project_root, env_path) # Append the path given in .env to the root
 
-print(f"Saving file to: {download_path}")
 
 # Download the CSV file
-response = requests.get(csv_url)
-if response.status_code == 200:
-    with open(download_path, "wb") as file:
-        file.write(response.content)
-    print(f"CSV file downloaded to {download_path}")
-else:
-    print("Couldn't download CSV")
-    sys.exit()
+def download_csv():
+    print(f"Saving file to: {env_path}")
+    response = requests.get(csv_url)
+    if response.status_code == 200:
+        with open(download_path, "wb") as file:
+            file.write(response.content)
+        print(f"CSV file downloaded to {env_path}")
+    else:
+        print("Couldn't download CSV")
+        sys.exit()
 
-# Load the CSV into Polars
-df = pl.read_csv(download_path, try_parse_dates=True)
+def get_sorted_dataframe():
+    df = pd.read_csv(download_path)
+    df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"], format="%m-%d-%Y")
+    df_sorted = df.sort_values("Outbreak Date").reset_index(drop=True)
+    df_sorted.index.name = "Index"
+    pd.set_option("display.max_rows", len(df_sorted))
+    return df_sorted
 
-# Convert "Outbreak Date" to Date type and sort
-df = df.with_columns(pl.col("Outbreak Date").str.strptime(pl.Date, "%m-%d-%Y")).sort("Outbreak Date")
 
-# Configure Polars to display all rows
-pl.Config.set_tbl_rows(len(df))
-
-# Sort by year of "Outbreak Date" and print
-# df_sorted = df.sort(pl.col("Outbreak Date").dt.year())
-# print(df_sorted)
-
-# Add this at the end of data_fetcher.py
-def get_dataframe():
-    """Returns the loaded DataFrame."""
-    return df
+# UNCOMMENT THESE TO PRINT IN CONSOLE
+# download_csv()
+# print(tabulate(get_sorted_dataframe(), headers="keys", tablefmt="simple_outline"))
