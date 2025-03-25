@@ -39,6 +39,15 @@ def get_sorted_dataframe():
     pd.set_option("display.max_rows", len(df_sorted))
     return df_sorted
 
+# Lets us pull the data from CDC directly into our database without downloading
+def get_sorted_dataframe_from_link(link):
+    df = pd.read_csv(link)
+    df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"], format="%m-%d-%Y")
+    df_sorted = df.sort_values("Outbreak Date").reset_index(drop=True)
+    df_sorted.index.name = "Index"
+    pd.set_option("display.max_rows", len(df_sorted))
+    return df_sorted
+
 
 # UNCOMMENT THESE TO PRINT IN CONSOLE
 # download_csv()
