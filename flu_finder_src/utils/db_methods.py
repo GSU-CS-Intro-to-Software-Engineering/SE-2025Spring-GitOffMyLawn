@@ -50,6 +50,5 @@ def get_updated_db():
 # # Write data
 # sheet2.update('A2', 'Updated value')
 
-
-
-update_db()
+if __name__ == "__main__":
+    update_db()
