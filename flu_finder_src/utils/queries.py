@@ -1,9 +1,10 @@
 import pandas as pd
 from tabulate import tabulate
-from data_fetcher import get_sorted_dataframe, get_reversed_dataframe
+from data_fetcher import get_sorted_dataframe_from_file, get_reversed_dataframe
+from db_methods import *
 from datetime import timedelta
 
-df = get_sorted_dataframe()
+df = get_sorted_dataframe_from_file()
 
 #------------------------------------------- National Methods -----------------------------------------#
 
@@ -46,8 +47,8 @@ def get_state_summary(state: str):
         "flock_size": f"{flock_size:,}"
     }
     
-# Sort counties in a state by newest to oldest    
-def get_sorted_counties(state: str):
+# Sort counties in a state by newest to oldest
+def get_r_sorted_counties(state: str):
     s = get_reversed_dataframe(filter_by_state(state))
     s = s.drop_duplicates(subset='County', keep='first')
     return s
@@ -125,7 +126,8 @@ if __name__ == "__main__":
     # print(total_outbreaks_by_state("Georgia"))
     # print(total_flock_size_by_state("Georgia"))
     # print(get_state_summary("Georgia"))
-    print(tabulate(get_sorted_counties("Georgia"), headers="keys", tablefmt="simple_outline"))
+    # print(tabulate(get_r_sorted_counties("Georgia"), headers="keys", tablefmt="simple_outline"))
+    print(df)
     
     # --- COUNTY METHODS ---
      # print(tabulate(filter_by_county("Elbert", "Georgia"), headers="keys", tablefmt="simple_outline"))
@@ -139,4 +141,4 @@ if __name__ == "__main__":
     # print(tabulate(get_time_frame_by_location("01/01/2025", "03/21/2025", "Georgia"), headers="keys", tablefmt="simple_outline"))
     # print(tabulate(get_time_frame_by_location("01/01/2025", "03/21/2025", "Iowa", "Buena Vista"), headers="keys", tablefmt="simple_outline"))
     # print(tabulate(sum_by_date(get_time_frame_from_df(df, "2024", "2025")), headers="keys", tablefmt="simple_outline"))
-    # print(tabulate(get_recurrences(get_sorted_counties("Georgia"), "01/01/2025"), headers="keys", tablefmt="simple_outline"))
+    # print(tabulate(get_recurrences(get_r_sorted_counties("Georgia"), "01/01/2025"), headers="keys", tablefmt="simple_outline"))
