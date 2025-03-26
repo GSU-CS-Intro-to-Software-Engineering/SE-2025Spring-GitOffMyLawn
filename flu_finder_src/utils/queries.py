@@ -1,6 +1,7 @@
 import pandas as pd
 from tabulate import tabulate
 from data_fetcher import get_sorted_dataframe
+from datetime import timedelta
 
 df = get_sorted_dataframe()
 
@@ -105,6 +106,12 @@ def sum_by_date(df):
     grouped = df.groupby("Outbreak Date", as_index=False)["Flock Size"].sum()
     return grouped
 
+# Checks for recurrences
+def get_recurrences(df, start, weeks=4):
+    start_date = pd.to_datetime(start)
+    end_date = start_date + timedelta(weeks=weeks)
+    return df[(df["Outbreak Date"] >= start_date) & (df["Outbreak Date"] <= end_date)]
+
 #------------------------------------------- Method Testing -----------------------------------------#
 if __name__ == "__main__":
     # --- COUNTRY METHODS ---
@@ -114,11 +121,11 @@ if __name__ == "__main__":
     # print(get_national_summary())
     
     # --- STATE METHODS ---
-    # print(tabulate(filter_by_state("Georgia"), headers="keys", tablefmt="simple_outline"))
+    print(tabulate(filter_by_state("Georgia"), headers="keys", tablefmt="simple_outline"))
     # print(total_outbreaks_by_state("Georgia"))
     # print(total_flock_size_by_state("Georgia"))
     # print(get_state_summary("Georgia"))
-    print(tabulate(get_sorted_counties("Georgia"), headers="keys", tablefmt="simple_outline"))
+    # print(tabulate(get_sorted_counties("Georgia"), headers="keys", tablefmt="simple_outline"))
     
     # --- COUNTY METHODS ---
     # print(tabulate(filter_by_county("Elbert", "Georgia"), headers="keys", tablefmt="simple_outline"))
@@ -129,3 +136,5 @@ if __name__ == "__main__":
     # --- GENERAL METHODS ---
     # print(tabulate(get_time_frame(df, "03/01/2025", "03/21/2025"), headers="keys", tablefmt="simple_outline"))
     # print(tabulate(sum_by_date(get_time_frame(df, "03/01/2025", "03/21/2025")), headers="keys", tablefmt="simple_outline"))
+    # df = filter_by_state("Georgia")
+    # print(tabulate(get_recurrences(df, "01/01/2025"), headers="keys", tablefmt="simple_outline"))
