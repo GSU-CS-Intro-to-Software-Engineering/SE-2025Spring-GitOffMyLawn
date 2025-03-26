@@ -33,7 +33,6 @@ def download_csv():
         
 def get_sorted_dataframe():
     df = pd.read_csv(download_path)
-    df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"], format="%m-%d-%Y")
     df_sorted = df.sort_values("Outbreak Date").reset_index(drop=True)
     df_sorted.index.name = "Index"
     pd.set_option("display.max_rows", len(df_sorted))
@@ -45,7 +44,7 @@ def get_reversed_dataframe(df):
 # Lets us pull the data from CDC directly into our database without downloading
 def get_sorted_dataframe_from_link(link):
     df = pd.read_csv(link)
-    df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"], format="%m-%d-%Y")
+    # df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"], format="%m-%d-%Y")
     df_sorted = df.sort_values("Outbreak Date").reset_index(drop=True)
     df_sorted.index.name = "Index"
     pd.set_option("display.max_rows", len(df_sorted))

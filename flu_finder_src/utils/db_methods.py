@@ -17,18 +17,16 @@ client = gspread.authorize(creds)
 # Open the spreadsheet by name or URL
 sheet1 = client.open("data").sheet1
 
-# Pull data from CDC
-df = get_sorted_dataframe_from_link("https://www.cdc.gov/bird-flu/modules/situation-summary/commercial-backyard-flocks.csv")
+def update_db():
+    # Pull data from CDC
+    df = get_sorted_dataframe_from_link("https://www.cdc.gov/bird-flu/modules/situation-summary/commercial-backyard-flocks.csv")
+    # Convert to list of lists
+    data = [df.columns.tolist()] + df.values.tolist()
+    # Write data
+    sheet1.update(values=data, range_name='A1')
 
-# Fix: Format Timestamp columns
-df["Outbreak Date"] = df["Outbreak Date"].dt.strftime("%Y-%m-%d")
 
-# Convert to list of lists
-data = [df.columns.tolist()] + df.values.tolist()
-
-# Write data
-sheet1.update(values=data, range_name='A1')
-
+update_db()
 # File output
 data = sheet1.get_all_records()
 print(data)
