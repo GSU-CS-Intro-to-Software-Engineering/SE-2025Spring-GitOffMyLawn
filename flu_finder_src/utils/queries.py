@@ -44,6 +44,12 @@ def get_state_summary(state: str):
         "outbreaks": f"{outbreaks:,}",
         "flock_size": f"{flock_size:,}"
     }
+    
+# Sort counties in a state by newest to oldest    
+def get_sorted_counties(state: str):
+    s = filter_by_state(state)
+    s = s.sort_index(ascending=False).drop_duplicates(subset='County', keep='first')
+    return s
 
 #------------------------------------------- County Methods -----------------------------------------#
 # Filter cases by County
@@ -102,7 +108,7 @@ def sum_by_date(df):
 #------------------------------------------- Method Testing -----------------------------------------#
 if __name__ == "__main__":
     # --- COUNTRY METHODS ---
-    print(tabulate(df, headers="keys", tablefmt="simple_outline"))
+    # print(tabulate(df, headers="keys", tablefmt="simple_outline"))
     # print(total_outbreaks_national())
     # print(total_flock_size_national())
     # print(get_national_summary())
@@ -112,6 +118,7 @@ if __name__ == "__main__":
     # print(total_outbreaks_by_state("Georgia"))
     # print(total_flock_size_by_state("Georgia"))
     # print(get_state_summary("Georgia"))
+    print(tabulate(get_sorted_counties("Georgia"), headers="keys", tablefmt="simple_outline"))
     
     # --- COUNTY METHODS ---
     # print(tabulate(filter_by_county("Elbert", "Georgia"), headers="keys", tablefmt="simple_outline"))
