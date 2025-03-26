@@ -1,6 +1,7 @@
 import gspread
 from google.oauth2.service_account import Credentials
 from data_fetcher import get_sorted_dataframe_from_link
+import pandas as pd
 
 # Define scopes
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets",
@@ -17,21 +18,25 @@ client = gspread.authorize(creds)
 # Open the spreadsheet by name or URL
 sheet1 = client.open("data").sheet1
 
-# Pull data from CDC
-df = get_sorted_dataframe_from_link("https://www.cdc.gov/bird-flu/modules/situation-summary/commercial-backyard-flocks.csv")
+#! To automate, make this a daily cron job
+def update_db():
+    # Pull data from CDC
+    df = get_sorted_dataframe_from_link("https://www.cdc.gov/bird-flu/modules/situation-summary/commercial-backyard-flocks.csv")
+    # Convert to list of lists
+    data = [df.columns.tolist()] + df.values.tolist()
+    # Write data
+    sheet1.update(values=data, range_name='A1')
 
-# Fix: Format Timestamp columns
-df["Outbreak Date"] = df["Outbreak Date"].dt.strftime("%Y-%m-%d")
+def get_db():
+    df = pd.DataFrame(sheet1.get_all_records())
+    df.index.name = "Index"
+    return df
 
-# Convert to list of lists
-data = [df.columns.tolist()] + df.values.tolist()
-
-# Write data
-sheet1.update(values=data, range_name='A1')
-
-# File output
-data = sheet1.get_all_records()
-print(data)
+def get_updated_db():
+    update_db()
+    data = sheet1.get_all_records()
+    df = pd.DataFrame(data)
+    return df
 
 
 # --- users ---
@@ -45,3 +50,5 @@ print(data)
 # # Write data
 # sheet2.update('A2', 'Updated value')
 
+if __name__ == "__main__":
+    update_db()

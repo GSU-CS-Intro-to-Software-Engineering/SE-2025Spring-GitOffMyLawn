@@ -1,10 +1,10 @@
 import pandas as pd
 import plotly.express as px
-from data_fetcher import get_sorted_dataframe
+# from data_fetcher import get_sorted_dataframe, get_reversed_dataframe
+from db_methods import *
 from queries import *
 
-df = get_sorted_dataframe()
-
+df = get_db()
 
 def bar_graph_maker(df, output_file="outbreak_plot.html"):
     if df.empty:
@@ -97,14 +97,13 @@ def line_graph_maker(df, output_file="outbreak_plot.html"):
 
 #------------------------------------------- Method Testing -----------------------------------------#
 if __name__ == "__main__":
-    frame = set_time_frame("2022", "2030")                           # <== National
-    # frame = set_time_frame("2025-01-01", "2025-02-01", "Georgia")    # <== State
-    # frame = set_time_frame("2024", "2030", "ioWA", "BUENA VistA")    # <== County
+    frame = get_time_frame_by_location("2022", "2030")                           # <== National
+    # frame = get_time_frame_by_location("2025-01-01", "2025-02-01", "Georgia")    # <== State
+    # frame = get_time_frame_by_location("2024", "2030", "ioWA", "BUENA VistA")    # <== County
     summed_frame = sum_by_date(frame)
     bar_graph_maker(summed_frame)
     # line_graph_maker(summed_frame)
     
     # TEST: sum in given time frame
-    # frame = set_time_frame("2025-01-13", "2025-01-14")
+    # frame = get_time_frame_by_location("2025-01-13", "2025-01-14")
     # print(sum_by_date(frame))
-    # print(tabulate(frame, headers="keys", tablefmt="simple_outline"))
