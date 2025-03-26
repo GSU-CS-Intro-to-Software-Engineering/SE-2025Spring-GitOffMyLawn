@@ -30,7 +30,7 @@ def download_csv():
     else:
         print("Couldn't download CSV")
         sys.exit()
-
+        
 def get_sorted_dataframe():
     df = pd.read_csv(download_path)
     df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"], format="%m-%d-%Y")
@@ -38,6 +38,9 @@ def get_sorted_dataframe():
     df_sorted.index.name = "Index"
     pd.set_option("display.max_rows", len(df_sorted))
     return df_sorted
+
+def get_reversed_dataframe(df):
+    return df.sort_values(by=['Index'], ascending=False)
 
 # Lets us pull the data from CDC directly into our database without downloading
 def get_sorted_dataframe_from_link(link):
