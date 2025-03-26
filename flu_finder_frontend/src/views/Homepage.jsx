@@ -3,13 +3,14 @@ import { Typography } from "@mui/material";
 
 const Homepage = () => {
   const [status, setStatus] = useState("Fetching data...");
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/api/cdc/data")
+    fetch(`${backendUrl}/api/cdc/data`)
       .then((response) => response.json())
       .then((data) => setStatus(data.status))
       .catch((error) => console.error("Error fetching data:", error));
-  }, []);
+  }, [backendUrl]);
 
   return (
     <div

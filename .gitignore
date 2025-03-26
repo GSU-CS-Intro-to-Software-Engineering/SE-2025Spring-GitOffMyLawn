@@ -12,9 +12,12 @@ node_modules/
 dist/
 dist-ssr/
 *.local
+.vite/
 
 # Python (Backend)
+venv/
 flu_finder_venv
+test_map.html
 data.csv
 flu_finder_src/data.csv
 .env
