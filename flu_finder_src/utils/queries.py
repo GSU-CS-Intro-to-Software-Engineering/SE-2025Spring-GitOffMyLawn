@@ -1,10 +1,10 @@
 import pandas as pd
 from tabulate import tabulate
-from data_fetcher import get_sorted_dataframe_from_file, get_reversed_dataframe
+from data_fetcher import get_reversed_dataframe, get_sorted_dataframe_from_file
 from db_methods import *
 from datetime import timedelta
 
-df = get_sorted_dataframe_from_file()
+df = get_db()
 
 #------------------------------------------- National Methods -----------------------------------------#
 
@@ -122,12 +122,11 @@ if __name__ == "__main__":
     # print(get_national_summary())
 
     # --- STATE METHODS ---
-    # print(tabulate(filter_by_state("Georgia"), headers="keys", tablefmt="simple_outline"))
+    print(tabulate(filter_by_state("Georgia"), headers="keys", tablefmt="simple_outline"))
     # print(total_outbreaks_by_state("Georgia"))
     # print(total_flock_size_by_state("Georgia"))
     # print(get_state_summary("Georgia"))
     # print(tabulate(get_r_sorted_counties("Georgia"), headers="keys", tablefmt="simple_outline"))
-    print(df)
     
     # --- COUNTY METHODS ---
      # print(tabulate(filter_by_county("Elbert", "Georgia"), headers="keys", tablefmt="simple_outline"))
@@ -136,7 +135,7 @@ if __name__ == "__main__":
      # print(get_county_summary("Elbert", "Georgia"))
  
      # --- GENERAL METHODS ---
-    # print(tabulate(get_time_frame_from_df(df, "03/01/2025", "03/21/2025"), headers="keys", tablefmt="simple_outline"))
+    # print(tabulate(get_time_frame_from_df(df, "02/01/2022", "02/10/2022"), headers="keys", tablefmt="simple_outline"))
     # print(tabulate(get_time_frame_by_location("03/01/2025", "03/21/2025"), headers="keys", tablefmt="simple_outline"))
     # print(tabulate(get_time_frame_by_location("01/01/2025", "03/21/2025", "Georgia"), headers="keys", tablefmt="simple_outline"))
     # print(tabulate(get_time_frame_by_location("01/01/2025", "03/21/2025", "Iowa", "Buena Vista"), headers="keys", tablefmt="simple_outline"))

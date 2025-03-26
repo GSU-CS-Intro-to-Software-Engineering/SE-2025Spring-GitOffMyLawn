@@ -4,7 +4,6 @@ import plotly.express as px
 from db_methods import *
 from queries import *
 
-update_db()
 df = get_db()
 
 def bar_graph_maker(df, output_file="outbreak_plot.html"):
