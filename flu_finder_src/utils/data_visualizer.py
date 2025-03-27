@@ -4,13 +4,18 @@ from db_methods import *
 from queries import *
 
 df = get_db()
+def get_horizontal_comparison(df, *args, show_top_n=None, **kwargs):
+    # Step 1: Grab title and output file (if manually set)
+    title = kwargs.get("title", None)
+    output_file = kwargs.get("output_file", None)
+
 
 def get_horizontal_comparison_frequencies(df, *args, show_top_n=None, **kwargs):
     # Step 1: Grab title and output file (if manually set)
     title = kwargs.get("title", None)
     # Replaced "None" with simpler title
     output_file = kwargs.get("output_file", "frequency_comparison_output.html")
-
+    
     if df.empty:
         print("No data to visualize.")
         return
