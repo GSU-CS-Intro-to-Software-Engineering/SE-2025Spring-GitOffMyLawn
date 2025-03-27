@@ -5,7 +5,11 @@ from db_methods import *
 from queries import *
 
 df = get_db()
-def get_horizontal_comparison(df, *args, title=None, output_file="horizontal_comparison.html"):
+def get_horizontal_comparison(df, *args, show_top_n=None, **kwargs):
+    # Step 1: Grab title and output file (if manually set)
+    title = kwargs.get("title", None)
+    output_file = kwargs.get("output_file", None)
+
     if df.empty:
         print("No data to visualize.")
         return
@@ -31,9 +35,18 @@ def get_horizontal_comparison(df, *args, title=None, output_file="horizontal_com
 
     # Sort from highest to lowest and reverse y-axis later for top-to-bottom effect
     grouped = grouped.sort_values(by="Percentage", ascending=False)
+    if show_top_n is not None:
+        grouped = grouped.head(show_top_n)
 
+    # Step 2: Build dynamic title
     if not title:
-        title = f"Percent of Outbreaks by {group_col} – {scope_name}"
+        title_parts = []
+        if show_top_n is not None:
+            plural_label = group_col + "s" if not group_col.endswith("s") else group_col
+            title_parts.append(f"Top {show_top_n} {plural_label}")
+        title_parts.append(f"Percent of Outbreaks by {group_col} – {scope_name}")
+        title = " – ".join(title_parts)
+
 
     fig = px.bar(
         grouped,
@@ -51,13 +64,25 @@ def get_horizontal_comparison(df, *args, title=None, output_file="horizontal_com
         yaxis_title=group_col,
         title_x=0.5,
         template="plotly_white",
-        yaxis=dict(autorange="reversed")  # ✅ largest on top
+        yaxis=dict(
+            autorange="reversed",
+            tickfont=dict(size=12),
+        ),
+        height=max(400, 30 * len(grouped))  # ⬅️ Dynamic height based on # of bars
     )
+
 
     fig.update_traces(
         texttemplate='%{text:.2f}%',
         textposition='outside'
     )
+
+    # Step 3: Auto-generate output file name if none was provided
+    if output_file is None:
+        safe_scope = scope_name.lower().replace(" ", "_")
+        safe_group = group_col.lower()
+        top_tag = f"top{show_top_n}_" if show_top_n is not None else ""
+        output_file = f"{top_tag}{safe_group}s_comparison_{safe_scope}.html"
 
     fig.write_html(output_file)
     print(f"Comparison chart saved to {output_file}")
@@ -159,9 +184,14 @@ if __name__ == "__main__":
     # frame = get_time_frame_by_location("2024", "2030", "ioWA", "BUENA VistA")    # <== County
     
     df = get_time_frame_by_location("2022", "2025")  # full USA
-    get_horizontal_comparison(df)
+    # get_horizontal_comparison(df)
+    get_horizontal_comparison(df, show_top_n=10)
     # df = get_time_frame_by_location("2022", "2025", "Georgia")  # only Georgia
     # get_horizontal_comparison(df, "Georgia")
+    # get_horizontal_comparison(df, "Georgia", show_top_n=10)
+    # get_horizontal_comparison(df, output_file="ga_top10.html", show_top_n=10)
+    # get_horizontal_comparison(df, title="Top Counties in GA", output_file="myplot.html", show_top_n=15)
+
 
 
     if len(frame) > 0:
