@@ -98,7 +98,7 @@ def get_horizontal_comparison_frequencies(df, *args, show_top_n=None, **kwargs):
     print(f"Comparison chart saved to {output_file}")
 
 
-def get_horizontal_comparison_percentages(df, *args, show_top_n=None, **kwargs):
+def get_horizontal_comparison_flock_sizes(df, *args, show_top_n=None, **kwargs):
     # Step 1: Grab title and output file (if manually set)
     title = kwargs.get("title", None)
     # Replaced "None" with simpler title
@@ -125,9 +125,8 @@ def get_horizontal_comparison_percentages(df, *args, show_top_n=None, **kwargs):
         raise ValueError("Only 0 or 1 argument allowed (for national or state-level comparison)")
 
     # Group and calculate percentage
-    grouped = df.groupby("Outbreak Date", as_index=False)["Flock Size"].sum()
-    print(grouped)
-    grouped["Percentage"] = grouped["Flock Size"] / grouped["Flock Size"].sum() * 100
+    grouped = df.groupby(group_col, as_index=False)["Flock Size"].sum()
+    grouped["Percentage"] = (grouped["Flock Size"] / grouped["Flock Size"].sum() * 100).round(3)
 
     # Sort from highest to lowest and reverse y-axis later for top-to-bottom effect
     grouped = grouped.sort_values(by="Percentage", ascending=False)
@@ -140,7 +139,7 @@ def get_horizontal_comparison_percentages(df, *args, show_top_n=None, **kwargs):
         if show_top_n is not None:
             plural_label = group_col_plural if not group_col.endswith("s") else group_col
             title_parts.append(f"Top {show_top_n} {plural_label}")
-        title_parts.append(f"Frequency of Outbreaks by {group_col} - {scope_name}")
+        title_parts.append(f"Percentage of affected birds by {group_col} - {scope_name}")
         title = " - ".join(title_parts)
 
 
@@ -156,7 +155,7 @@ def get_horizontal_comparison_percentages(df, *args, show_top_n=None, **kwargs):
     )
 
     fig.update_layout(
-        xaxis_title="Percentage of occurrences",
+        xaxis_title="Percentage",
         yaxis_title=group_col,
         title_x=0.5,
         template="plotly_white",
@@ -307,21 +306,19 @@ if __name__ == "__main__":
     # # line_graph_maker(summed_frame)
     
     # df = get_time_frame_by_location("2022", "3000")  # full USA
-    get_horizontal_comparison_frequencies(df)
+    # get_horizontal_comparison_frequencies(df)
     # get_horizontal_comparison_frequencies(df, show_top_n=10)
-    # df = get_time_frame_by_location("2022", "2025", "Georgia")  # only Georgia
-    # get_horizontal_comparison_frequencies(df, "Georgia")
+    get_horizontal_comparison_frequencies(df, "Georgia")
     # get_horizontal_comparison_frequencies(df, "Georgia", show_top_n=10)
     # get_horizontal_comparison_frequencies(df, output_file="ga_top10.html", show_top_n=10)
     # get_horizontal_comparison_frequencies(df, title="Top Counties in GA", output_file="myplot.html", show_top_n=15)
     
-    # get_horizontal_comparison_percentages(df)
-    # get_horizontal_comparison_percentages(df, show_top_n=10)
-    # df = get_time_frame_by_location("2022", "2025", "Georgia")  # only Georgia
-    # get_horizontal_comparison_percentages(df, "Georgia")
-    # get_horizontal_comparison_percentages(df, "Georgia", show_top_n=10)
-    # get_horizontal_comparison_percentages(df, output_file="ga_top10.html", show_top_n=10)
-    # get_horizontal_comparison_percentages(df, title="Top Counties in GA", output_file="myplot.html", show_top_n=15)
+    # get_horizontal_comparison_flock_sizes(df)
+    # get_horizontal_comparison_flock_sizes(df, show_top_n=10)
+    # get_horizontal_comparison_flock_sizes(df, "Georgia")
+    # get_horizontal_comparison_flock_sizes(df, "Georgia", show_top_n=10)
+    # get_horizontal_comparison_flock_sizes(df, output_file="ga_top10.html", show_top_n=10)
+    # get_horizontal_comparison_flock_sizes(df, title="Top Counties in GA", output_file="myplot.html", show_top_n=15)
     
     # TEST: sum in given time frame
     # frame = get_time_frame_by_location("2025-01-13", "2025-01-14")
