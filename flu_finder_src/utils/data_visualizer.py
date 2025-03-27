@@ -4,11 +4,6 @@ from db_methods import *
 from queries import *
 
 df = get_db()
-def get_horizontal_comparison(df, *args, show_top_n=None, **kwargs):
-    # Step 1: Grab title and output file (if manually set)
-    title = kwargs.get("title", None)
-    output_file = kwargs.get("output_file", None)
-
 
 def get_horizontal_comparison_frequencies(df, *args, show_top_n=None, **kwargs):
     # Step 1: Grab title and output file (if manually set)
@@ -313,12 +308,12 @@ if __name__ == "__main__":
     # df = get_time_frame_by_location("2022", "3000")  # full USA
     # get_horizontal_comparison_frequencies(df)
     # get_horizontal_comparison_frequencies(df, show_top_n=10)
-    get_horizontal_comparison_frequencies(df, "Georgia")
+    # get_horizontal_comparison_frequencies(df, "Georgia")
     # get_horizontal_comparison_frequencies(df, "Georgia", show_top_n=10)
     # get_horizontal_comparison_frequencies(df, output_file="ga_top10.html", show_top_n=10)
     # get_horizontal_comparison_frequencies(df, title="Top Counties in GA", output_file="myplot.html", show_top_n=15)
     
-    # get_horizontal_comparison_flock_sizes(df)
+    get_horizontal_comparison_flock_sizes(df)
     # get_horizontal_comparison_flock_sizes(df, show_top_n=10)
     # get_horizontal_comparison_flock_sizes(df, "Georgia")
     # get_horizontal_comparison_flock_sizes(df, "Georgia", show_top_n=10)
