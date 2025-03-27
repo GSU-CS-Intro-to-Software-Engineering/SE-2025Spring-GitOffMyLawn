@@ -1,14 +1,15 @@
 import pandas as pd
 import plotly.express as px
-# from data_fetcher import get_sorted_dataframe, get_reversed_dataframe
 from db_methods import *
 from queries import *
 
 df = get_db()
+
 def get_horizontal_comparison(df, *args, show_top_n=None, **kwargs):
     # Step 1: Grab title and output file (if manually set)
     title = kwargs.get("title", None)
-    output_file = kwargs.get("output_file", None)
+    # Replaced "None" with simpler title
+    output_file = kwargs.get("output_file", "horizontal_comparison_output.html")
 
     if df.empty:
         print("No data to visualize.")
@@ -44,8 +45,8 @@ def get_horizontal_comparison(df, *args, show_top_n=None, **kwargs):
         if show_top_n is not None:
             plural_label = group_col + "s" if not group_col.endswith("s") else group_col
             title_parts.append(f"Top {show_top_n} {plural_label}")
-        title_parts.append(f"Percent of Outbreaks by {group_col} – {scope_name}")
-        title = " – ".join(title_parts)
+        title_parts.append(f"Percent of Outbreaks by {group_col} - {scope_name}")
+        title = " - ".join(title_parts)
 
 
     fig = px.bar(
@@ -56,7 +57,7 @@ def get_horizontal_comparison(df, *args, show_top_n=None, **kwargs):
         title=title,
         text="Percentage",
         color="Percentage",
-        color_continuous_scale="RdYlGn_r"  # 🔁 'r' = reversed (so red = high, green = low)
+        color_continuous_scale="RdYlGn_r"  # 'r' = reversed (so red = high, green = low)
     )
 
     fig.update_layout(
@@ -68,7 +69,7 @@ def get_horizontal_comparison(df, *args, show_top_n=None, **kwargs):
             autorange="reversed",
             tickfont=dict(size=12),
         ),
-        height=max(400, 30 * len(grouped))  # ⬅️ Dynamic height based on # of bars
+        height=max(400, 30 * len(grouped))  # Dynamic height based on # of bars
     )
 
 
@@ -78,16 +79,23 @@ def get_horizontal_comparison(df, *args, show_top_n=None, **kwargs):
     )
 
     # Step 3: Auto-generate output file name if none was provided
-    if output_file is None:
-        safe_scope = scope_name.lower().replace(" ", "_")
-        safe_group = group_col.lower()
-        top_tag = f"top{show_top_n}_" if show_top_n is not None else ""
-        output_file = f"{top_tag}{safe_group}s_comparison_{safe_scope}.html"
+    # Note: I replaced "None" with "horizontal_comparison_output.html"
+    #   I think it would be better to be consistent with the file name since it'll only be used in frontend integration
+    # if output_file is None:
+    #     safe_scope = scope_name.lower().replace(" ", "_")
+    #     safe_group = group_col.lower()
+    #     top_tag = f"top{show_top_n}_" if show_top_n is not None else ""
+    #     output_file = f"{top_tag}{safe_group}s_comparison_{safe_scope}.html"
 
-    fig.write_html(output_file)
+    config = {"displayModeBar": True,
+            "scrollZoom": True,
+            "modeBarButtonsToRemove": ["autoScale", "select2d", "lasso2d"]}
+
+    # Save to HTML
+    fig.write_html(output_file, config=config)
     print(f"Comparison chart saved to {output_file}")
 
-def bar_graph_maker(df, output_file="outbreak_plot.html", title="Outbreaks Over Time"):
+def bar_graph_maker(df, output_file="outbreak_bar_graph.html", title="Outbreaks Over Time"):
     if df.empty:
         print("No data to plot. Check your date range and filters.")
         return
@@ -175,25 +183,9 @@ def line_graph_maker(df, output_file="outbreak_plot.html", title="Outbreaks Over
     # Save to HTML
     fig.write_html(output_file, config=config)
     print(f"Plot saved to {output_file}")
-
-
-#------------------------------------------- Method Testing -----------------------------------------#
-if __name__ == "__main__":
-    frame = get_time_frame_by_location("2022", "2030")                           # <== National
-    # frame = get_time_frame_by_location("2025-01-01", "2025-02-01", "Georgia")    # <== State
-    # frame = get_time_frame_by_location("2024", "2030", "ioWA", "BUENA VistA")    # <== County
     
-    df = get_time_frame_by_location("2022", "2025")  # full USA
-    # get_horizontal_comparison(df)
-    get_horizontal_comparison(df, show_top_n=10)
-    # df = get_time_frame_by_location("2022", "2025", "Georgia")  # only Georgia
-    # get_horizontal_comparison(df, "Georgia")
-    # get_horizontal_comparison(df, "Georgia", show_top_n=10)
-    # get_horizontal_comparison(df, output_file="ga_top10.html", show_top_n=10)
-    # get_horizontal_comparison(df, title="Top Counties in GA", output_file="myplot.html", show_top_n=15)
 
-
-
+def title_picker(frame):
     if len(frame) > 0:
         unique_states = frame["State"].dropna().unique()
         unique_counties = frame["County"].dropna().unique()
@@ -206,11 +198,28 @@ if __name__ == "__main__":
             title_suffix = "USA"
     else:
         title_suffix = "Unknown Region"
+    return title_suffix
 
 
-    title = f"Outbreaks Over Time – {title_suffix}"
-    summed_frame = sum_by_date(frame)
-    bar_graph_maker(summed_frame, title=title)
+#------------------------------------------- Method Testing -----------------------------------------#
+if __name__ == "__main__":
+    frame = get_time_frame_by_location("2022", "2030", "Georgia")                           # <== National
+    # frame = get_time_frame_by_location("2025-01-01", "2025-02-01", "Georgia")    # <== State
+    # frame = get_time_frame_by_location("2024", "2030", "ioWA", "BUENA VistA")    # <== County
+    
+    df = get_time_frame_by_location("2022", "2025")  # full USA
+    # get_horizontal_comparison(df)
+    # get_horizontal_comparison(df, show_top_n=10)
+    # df = get_time_frame_by_location("2022", "2025", "Georgia")  # only Georgia
+    # get_horizontal_comparison(df, "Georgia")
+    # get_horizontal_comparison(df, "Georgia", show_top_n=10)
+    # get_horizontal_comparison(df, output_file="ga_top10.html", show_top_n=10)
+    # get_horizontal_comparison(df, title="Top Counties in GA", output_file="myplot.html", show_top_n=15)
+
+
+    title = f"Outbreaks Over Time - {title_picker(frame)}"
+    # summed_frame = sum_by_date(frame)
+    # bar_graph_maker(summed_frame, title=title)
     # line_graph_maker(summed_frame)
     
     # TEST: sum in given time frame
