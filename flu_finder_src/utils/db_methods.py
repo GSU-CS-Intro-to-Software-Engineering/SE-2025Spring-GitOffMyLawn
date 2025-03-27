@@ -18,6 +18,7 @@ client = gspread.authorize(creds)
 # Open the spreadsheet by name or URL
 sheet1 = client.open("data").sheet1
 
+
 #! To automate, make this a daily cron job
 def update_db():
     # Pull data from CDC
@@ -27,16 +28,18 @@ def update_db():
     # Write data
     sheet1.update(values=data, range_name='A1')
 
+
 def get_db():
     df = pd.DataFrame(sheet1.get_all_records())
     df.index.name = "Index"
     return df
 
-def get_updated_db():
-    update_db()
-    data = sheet1.get_all_records()
-    df = pd.DataFrame(data)
-    return df
+
+# This method will likely not be necessary once cronjob automates updates
+# def get_updated_db():
+#     update_db()
+#     df = get_db()
+#     return df
 
 
 # --- users ---
