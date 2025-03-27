@@ -190,6 +190,80 @@ def get_horizontal_comparison_flock_sizes(df, *args, show_top_n=None, **kwargs):
     print(f"Comparison chart saved to {output_file}")
 
 
+def get_horizontal_comparison_flock_types(df, *args, show_top_n=None, **kwargs):
+    # Step 1: Grab title and output file (if manually set)
+    title = kwargs.get("title", None)
+    output_file = kwargs.get("output_file", "flock_type_comparison_output.html")
+
+    if df.empty:
+        print("No data to visualize.")
+        return
+
+    df = df.copy()
+
+    if len(args) == 0:
+        scope_name = "USA"
+    elif len(args) == 1:
+        scope_name = args[0].title()
+        df = df[df["State"].str.title() == scope_name]
+    else:
+        raise ValueError("Only 0 or 1 argument allowed (for national or state-level comparison)")
+
+    # Group by Flock Type and count
+    grouped = df["Flock Type"].value_counts().reset_index()
+    grouped.columns = ["Flock Type", "Count"]
+    grouped["Percentage"] = (grouped["Count"] / grouped["Count"].sum() * 100).round(3)
+
+    # Sort and slice
+    grouped = grouped.sort_values(by="Percentage", ascending=False)
+    if show_top_n is not None:
+        grouped = grouped.head(show_top_n)
+
+    # Build title
+    if not title:
+        title_parts = []
+        if show_top_n is not None:
+            title_parts.append(f"Top {show_top_n} Flock Types")
+        title_parts.append(f"Distribution of Flock Types - {scope_name}")
+        title = " - ".join(title_parts)
+
+    # Plot
+    fig = px.bar(
+        grouped,
+        x="Percentage",
+        y="Flock Type",
+        orientation='h',
+        title=title,
+        text="Percentage",
+        color="Percentage",
+        color_continuous_scale="Blugrn"
+    )
+
+    fig.update_layout(
+        xaxis_title="Flock Type Percentage",
+        yaxis_title="Flock Type",
+        title_x=0.5,
+        template="plotly_white",
+        yaxis=dict(
+            autorange="reversed",
+            tickfont=dict(size=12),
+        ),
+        height=max(400, 30 * len(grouped))
+    )
+
+    fig.update_traces(
+        texttemplate='%{text:.2f}%',
+        textposition='outside'
+    )
+
+    config = {"displayModeBar": True,
+              "scrollZoom": True,
+              "modeBarButtonsToRemove": ["autoScale", "select2d", "lasso2d"]}
+
+    fig.write_html(output_file, config=config)
+    print(f"Comparison chart saved to {output_file}")
+
+
 def bar_graph_maker(df, output_file="outbreak_bar_graph.html", title="Outbreaks Over Time"):
     if df.empty:
         print("No data to plot. Check your date range and filters.")
@@ -233,8 +307,6 @@ def bar_graph_maker(df, output_file="outbreak_bar_graph.html", title="Outbreaks 
     fig.write_html(output_file, config=config)
     print(f"Plot saved to {output_file}")
 
-
-import plotly.express as px
 
 def pie_chart_maker(df, *args):
     df = df.copy()
@@ -363,11 +435,13 @@ if __name__ == "__main__":
     # get_horizontal_comparison_frequencies(df, title="Top Counties in GA", output_file="myplot.html", show_top_n=15)
     
     # get_horizontal_comparison_flock_sizes(df)
-    get_horizontal_comparison_flock_sizes(df, show_top_n=10)
+    # get_horizontal_comparison_flock_sizes(df, show_top_n=10)
     # get_horizontal_comparison_flock_sizes(df, "Georgia")
     # get_horizontal_comparison_flock_sizes(df, "Georgia", show_top_n=10)
     # get_horizontal_comparison_flock_sizes(df, output_file="ga_top10.html", show_top_n=10)
     # get_horizontal_comparison_flock_sizes(df, title="Top Counties in GA", output_file="myplot.html", show_top_n=15)
+    
+    get_horizontal_comparison_flock_types(df)
     
     # pie_chart_maker(df)
     # pie_chart_maker(df, "Georgia")
@@ -375,3 +449,5 @@ if __name__ == "__main__":
     # TEST: sum in given time frame
     # frame = get_time_frame_by_location("2025-01-13", "2025-01-14")
     # print(sum_by_date(frame))
+
+#! Replace function names to all have format (get_...)
