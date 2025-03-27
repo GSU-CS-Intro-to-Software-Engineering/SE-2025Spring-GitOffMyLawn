@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flu_finder_src.utils import data_fetcher as data
 from flu_finder_src.utils import queries
+from flu_finder_src.utils.map_visualizer import initialize_map
 
 # Create a Blueprint for API routes
 api_bp = Blueprint('api', __name__, url_prefix='/api')
@@ -68,4 +69,10 @@ def county_data():
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+# Endpoint for initializing the map
+@api_bp.route('/map/initialize', methods=['GET'])
+def initialize_map_endpoint():
+    map_html = initialize_map().get_root().render()
+    return jsonify({'map_html': map_html})
 

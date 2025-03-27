@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
+import MapCanvas from "../components/MapCanvas";
+import MainCanvas from "../components/MainCanvas";
 
 const Homepage = () => {
   const [status, setStatus] = useState("Fetching data...");
@@ -19,12 +21,13 @@ const Homepage = () => {
         marginLeft: "270px",
         padding: "40px",
         width: "calc(100% - 270px)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        height: "calc(100vh - 60px)"
       }}
     >
-      <Typography variant="h4" fontWeight="bold">
-        Flu Finder Frontend
-      </Typography>
-      <Typography variant="body1">Backend Response: {status}</Typography>
+      <MainCanvas />
     </div>
   );
 };
