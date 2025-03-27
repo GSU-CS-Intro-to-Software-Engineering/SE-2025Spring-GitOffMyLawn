@@ -20,10 +20,12 @@ def get_horizontal_comparison(df, *args, show_top_n=None, **kwargs):
     if len(args) == 0:
         # National level: group by state
         group_col = "State"
+        group_col_plural = "States"
         scope_name = "USA"
     elif len(args) == 1:
         # State level: group by county
         group_col = "County"
+        group_col_plural = "Counties"
         scope_name = args[0].title()
         df = df[df["State"].str.title() == scope_name]
     else:
@@ -43,7 +45,7 @@ def get_horizontal_comparison(df, *args, show_top_n=None, **kwargs):
     if not title:
         title_parts = []
         if show_top_n is not None:
-            plural_label = group_col + "s" if not group_col.endswith("s") else group_col
+            plural_label = group_col_plural if not group_col.endswith("s") else group_col
             title_parts.append(f"Top {show_top_n} {plural_label}")
         title_parts.append(f"Percent of Outbreaks by {group_col} - {scope_name}")
         title = " - ".join(title_parts)
@@ -57,7 +59,7 @@ def get_horizontal_comparison(df, *args, show_top_n=None, **kwargs):
         title=title,
         text="Percentage",
         color="Percentage",
-        color_continuous_scale="RdYlGn_r"  # 'r' = reversed (so red = high, green = low)
+        color_continuous_scale="Reds"  # Add '_r' to reverse
     )
 
     fig.update_layout(
@@ -203,13 +205,13 @@ def title_picker(frame):
 
 #------------------------------------------- Method Testing -----------------------------------------#
 if __name__ == "__main__":
-    frame = get_time_frame_by_location("2022", "2030", "Georgia")                           # <== National
+    frame = get_time_frame_by_location("2022", "2030", "Georgia")                # <== National
     # frame = get_time_frame_by_location("2025-01-01", "2025-02-01", "Georgia")    # <== State
     # frame = get_time_frame_by_location("2024", "2030", "ioWA", "BUENA VistA")    # <== County
     
     df = get_time_frame_by_location("2022", "2025")  # full USA
     # get_horizontal_comparison(df)
-    # get_horizontal_comparison(df, show_top_n=10)
+    get_horizontal_comparison(df, show_top_n=10)
     # df = get_time_frame_by_location("2022", "2025", "Georgia")  # only Georgia
     # get_horizontal_comparison(df, "Georgia")
     # get_horizontal_comparison(df, "Georgia", show_top_n=10)
@@ -217,7 +219,7 @@ if __name__ == "__main__":
     # get_horizontal_comparison(df, title="Top Counties in GA", output_file="myplot.html", show_top_n=15)
 
 
-    title = f"Outbreaks Over Time - {title_picker(frame)}"
+    # title = f"Outbreaks Over Time - {title_picker(frame)}"
     # summed_frame = sum_by_date(frame)
     # bar_graph_maker(summed_frame, title=title)
     # line_graph_maker(summed_frame)
