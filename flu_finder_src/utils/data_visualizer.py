@@ -5,6 +5,7 @@ from queries import *
 
 df = get_db()
 
+# Horizontal bar graph comparing % frequency of outbreaks (scope: national or state)
 def get_horizontal_comparison_frequencies(df, *args, show_top_n=None, **kwargs):
     # Step 1: Grab title and output file (if manually set)
     title = kwargs.get("title", None)
@@ -59,7 +60,7 @@ def get_horizontal_comparison_frequencies(df, *args, show_top_n=None, **kwargs):
         title=title,
         text="Frequency (%)",
         color="Frequency (%)",
-        color_continuous_scale="Reds"  # Add '_r' to reverse
+        color_continuous_scale="Blugrn"  # Add '_r' to reverse
     )
 
     fig.update_layout(
@@ -97,7 +98,7 @@ def get_horizontal_comparison_frequencies(df, *args, show_top_n=None, **kwargs):
     fig.write_html(output_file, config=config)
     print(f"Comparison chart saved to {output_file}")
 
-
+# Horizontal bar graph comparing % sizes of outbreaks (scope: national or state)
 def get_horizontal_comparison_flock_sizes(df, *args, show_top_n=None, **kwargs):
     # Step 1: Grab title and output file (if manually set)
     title = kwargs.get("title", None)
@@ -151,7 +152,7 @@ def get_horizontal_comparison_flock_sizes(df, *args, show_top_n=None, **kwargs):
         title=title,
         text="Percentage",
         color="Percentage",
-        color_continuous_scale="Reds"  # Add '_r' to reverse
+        color_continuous_scale="Blugrn"  # Add '_r' to reverse
     )
 
     fig.update_layout(
@@ -189,17 +190,250 @@ def get_horizontal_comparison_flock_sizes(df, *args, show_top_n=None, **kwargs):
     fig.write_html(output_file, config=config)
     print(f"Comparison chart saved to {output_file}")
 
+# Horizontal bar graph comparing % of outbreaks (scope: national or state)
+def get_horizontal_comparison_flock_types(df, *args, show_top_n=None, **kwargs):
+    # Step 1: Grab title and output file (if manually set)
+    title = kwargs.get("title", None)
+    output_file = kwargs.get("output_file", "flock_type_comparison_output.html")
 
-def bar_graph_maker(df, output_file="outbreak_bar_graph.html", title="Outbreaks Over Time"):
+    if df.empty:
+        print("No data to visualize.")
+        return
+
+    df = df.copy()
+
+    if len(args) == 0:
+        scope_name = "USA"
+    elif len(args) == 1:
+        scope_name = args[0].title()
+        df = df[df["State"].str.title() == scope_name]
+    else:
+        raise ValueError("Only 0 or 1 argument allowed (for national or state-level comparison)")
+
+    # Group by Flock Type and count
+    grouped = df["Flock Type"].value_counts().reset_index()
+    grouped.columns = ["Flock Type", "Count"]
+    grouped["Percentage"] = (grouped["Count"] / grouped["Count"].sum() * 100).round(3)
+
+    # Sort and slice
+    grouped = grouped.sort_values(by="Percentage", ascending=False)
+    if show_top_n is not None:
+        grouped = grouped.head(show_top_n)
+
+    # Build title
+    if not title:
+        title_parts = []
+        if show_top_n is not None:
+            title_parts.append(f"Top {show_top_n} Flock Types")
+        title_parts.append(f"Distribution of Flock Types - {scope_name}")
+        title = " - ".join(title_parts)
+
+    # Plot
+    fig = px.bar(
+        grouped,
+        x="Percentage",
+        y="Flock Type",
+        orientation='h',
+        title=title,
+        text="Percentage",
+        color="Percentage",
+        color_continuous_scale="Blugrn"
+    )
+
+    fig.update_layout(
+        xaxis_title="Flock Type Percentage",
+        yaxis_title="Flock Type",
+        title_x=0.5,
+        template="plotly_white",
+        yaxis=dict(
+            autorange="reversed",
+            tickfont=dict(size=12),
+        ),
+        height=max(400, 30 * len(grouped))
+    )
+
+    fig.update_traces(
+        texttemplate='%{text:.2f}%',
+        textposition='outside'
+    )
+
+    config = {"displayModeBar": True,
+              "scrollZoom": True,
+              "modeBarButtonsToRemove": ["autoScale", "select2d", "lasso2d"]}
+
+    fig.write_html(output_file, config=config)
+    print(f"Comparison chart saved to {output_file}")
+
+# Pie graph comparing % frequency of outbreaks (scope: national or state)
+def get_pie_frequencies(df, *args, **kwargs):
+    title = kwargs.get("title", None)
+    output_file = kwargs.get("output_file", "pie_flock_types_output.html")
+
+    if df.empty:
+        print("No data to visualize.")
+        return
+
+    df = df.copy()
+
+    # Determine scope
+    if len(args) == 0:
+        scope_name = "USA"
+    elif len(args) == 1:
+        scope_name = args[0].title()
+        df = df[df["State"].str.title() == scope_name]
+    else:
+        raise ValueError("Only 0 or 1 argument allowed (for national or state-level comparison)")
+
+    # Group by Flock Type and calculate frequency
+    grouped = df["Flock Type"].value_counts().reset_index()
+    grouped.columns = ["Flock Type", "Count"]
+    grouped["Flock (%)"] = (grouped["Count"] / grouped["Count"].sum() * 100).round(3)
+
+    # Title fallback
+    if not title:
+        title = f"Frequency of Outbreaks by Flock Type - {scope_name}"
+
+    # Create pie chart
+    fig = px.pie(
+        grouped,
+        names="Flock Type",
+        values="Count",
+        title=title,
+        hover_data=["Flock (%)"]
+    )
+
+    fig.update_traces(
+        textinfo="percent+label",
+        hovertemplate="%{label}<br>Outbreaks: %{value}<br>Percentage: %{customdata[0]}%",
+        customdata=grouped[["Flock (%)"]]
+    )
+
+    fig.update_layout(
+        title_x=0.5,
+        width=800,
+        height=800,
+        template="plotly_white"
+    )
+
+    config = {"displayModeBar": True}
+    fig.write_html(output_file, config=config)
+    print(f"Plot saved to {output_file}")
+
+# Pie graph comparing % sizes of outbreaks (scope: national or state)
+def get_pie_flock_sizes(df, *args, **kwargs):
+    title = kwargs.get("title", None)
+    output_file = kwargs.get("output_file", "pie_flock_sizes_output.html")
+
+    if df.empty:
+        print("No data to visualize.")
+        return
+
+    df = df.copy()
+
+    # Scope setup
+    if len(args) == 0:
+        group_col = "State"
+        scope_name = "USA"
+    elif len(args) == 1:
+        group_col = "County"
+        scope_name = args[0].title()
+        df = df[df["State"].str.title() == scope_name]
+    else:
+        raise ValueError("Only 0 or 1 argument allowed (for national or state-level comparison)")
+
+    # Group and calculate total and percentage
+    grouped = df.groupby(group_col, as_index=False)["Flock Size"].sum()
+    grouped["Percentage"] = (grouped["Flock Size"] / grouped["Flock Size"].sum() * 100).round(2)
+
+    # Default title
+    if not title:
+        title = f"Distribution of Affected Birds by {group_col} - {scope_name}"
+
+    # Create pie chart
+    fig = px.pie(
+        grouped,
+        names=group_col,
+        values="Flock Size",
+        title=title,
+        hover_data=["Percentage"]
+    )
+
+    fig.update_traces(
+        textinfo="none",
+        hovertemplate=f"%{{label}}<br>Birds: %{{value:,}}<br>Percentage: %{{customdata[0]}}%",
+        customdata=grouped[["Percentage"]]
+    )
+
+    fig.update_layout(
+        title_x=0.5,
+        width=800,
+        height=800,
+        template="plotly_white"
+    )
+
+    config = {"displayModeBar": True}
+    fig.write_html(output_file, config=config)
+    print(f"Pie chart saved to {output_file}")
+
+# Pie graph comparing % of outbreaks (scope: national or state)
+def get_pie_flock_types(df, *args):
+    df = df.copy()
+
+    # Select scope (0 is national)
+    if len(args) == 0:
+        scope_name = "USA"
+    elif len(args) == 1:
+        scope_name = args[0].title()
+        df = df[df["State"].str.title() == scope_name]
+    else:
+        raise ValueError("Only 0 or 1 argument allowed (for national or state-level comparison)")
+
+    # Group by Flock Type and calculate percentage
+    grouped = df["Flock Type"].value_counts().reset_index()
+    grouped.columns = ["Flock Type", "Count"]
+    grouped["Flock (%)"] = (grouped["Count"] / grouped["Count"].sum() * 100).round(3)
+
+    # Create pie chart
+    fig = px.pie(
+        grouped,
+        names="Flock Type",
+        values="Count",
+        title=f"Flock Type Distribution - {scope_name}",
+        hover_data=["Flock (%)"],
+    )
+    fig.update_traces(
+        textinfo="none",  # Removes text labels from pie slices
+        hovertemplate="%{label}<br>Count: %{value}<br>Percentage: %{customdata[0]}%",  # Custom hover
+        customdata=grouped[["Flock (%)"]],  # Pass percentage to hovertemplate
+    )
+
+    # Set figure size
+    fig.update_layout(
+        width=800,
+        height=800,
+        # showlegend=True
+    )
+    
+    # Scroll wheel zoom and always visible modebar
+    config = {"displayModeBar": True}
+    
+    # Save to HTML
+    fig.write_html("pie_chart.html", config=config)
+    print(f"Plot saved to pie_chart.html")
+
+# Bar graph showing summed outbreaks over time
+def get_vertical_outbreaks_over_time(df, output_file="outbreak_bar_graph.html", title="Outbreaks Over Time"):
     if df.empty:
         print("No data to plot. Check your date range and filters.")
         return
 
     df = df.copy()
     df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"])
+    
+    grouped = df.groupby("Outbreak Date", as_index=False)["Flock Size"].sum()
 
     fig = px.bar(
-        df,
+        grouped,
         x="Outbreak Date",
         y="Flock Size",
         title=title,
@@ -233,7 +467,7 @@ def bar_graph_maker(df, output_file="outbreak_bar_graph.html", title="Outbreaks 
     fig.write_html(output_file, config=config)
     print(f"Plot saved to {output_file}")
 
-
+# Line graph showing summed outbreaks over time (opt for vertical bar graph each time to accurately show gaps)
 def line_graph_maker(df, output_file="outbreak_plot.html", title="Outbreaks Over Time"):
     if df.empty:
         print("No data to plot. Check your date range and filters.")
@@ -242,9 +476,10 @@ def line_graph_maker(df, output_file="outbreak_plot.html", title="Outbreaks Over
     df = df.copy()
     df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"])
     
+    grouped = df.groupby("Outbreak Date", as_index=False)["Flock Size"].sum()
 
     fig = px.line(
-        df,
+        grouped,
         x="Outbreak Date",
         y="Flock Size",
         title=title,
@@ -278,7 +513,7 @@ def line_graph_maker(df, output_file="outbreak_plot.html", title="Outbreaks Over
     fig.write_html(output_file, config=config)
     print(f"Plot saved to {output_file}")
 
-
+# Helper method to pick title (Not very useful on its own)
 def title_picker(frame):
     if len(frame) > 0:
         unique_states = frame["State"].dropna().unique()
@@ -302,10 +537,11 @@ if __name__ == "__main__":
     # frame = get_time_frame_by_location("2024", "2030", "ioWA", "BUENA VistA")    # <== County
     # title = f"Outbreaks Over Time - {title_picker(frame)}"
     # summed_frame = sum_by_date(frame)
-    # bar_graph_maker(summed_frame, title=title)
+    # get_vertical_outbreaks_over_time(summed_frame, title=title)
+    get_vertical_outbreaks_over_time(df)
     # # line_graph_maker(summed_frame)
-    
-    # df = get_time_frame_by_location("2022", "3000")  # full USA
+    # # line_graph_maker(df)
+
     # get_horizontal_comparison_frequencies(df)
     # get_horizontal_comparison_frequencies(df, show_top_n=10)
     # get_horizontal_comparison_frequencies(df, "Georgia")
@@ -313,13 +549,27 @@ if __name__ == "__main__":
     # get_horizontal_comparison_frequencies(df, output_file="ga_top10.html", show_top_n=10)
     # get_horizontal_comparison_frequencies(df, title="Top Counties in GA", output_file="myplot.html", show_top_n=15)
     
-    get_horizontal_comparison_flock_sizes(df)
+    # get_horizontal_comparison_flock_sizes(df)
     # get_horizontal_comparison_flock_sizes(df, show_top_n=10)
     # get_horizontal_comparison_flock_sizes(df, "Georgia")
     # get_horizontal_comparison_flock_sizes(df, "Georgia", show_top_n=10)
     # get_horizontal_comparison_flock_sizes(df, output_file="ga_top10.html", show_top_n=10)
     # get_horizontal_comparison_flock_sizes(df, title="Top Counties in GA", output_file="myplot.html", show_top_n=15)
-    
+
+    # get_horizontal_comparison_flock_types(df)
+    # get_horizontal_comparison_flock_types(df, "Georgia")
+
+    # get_pie_frequencies(df)
+    # get_pie_frequencies(df, "Georgia")
+
+    # get_pie_flock_sizes(df)
+    # get_pie_flock_sizes(df, "Ohio")
+
+    # get_pie_flock_types(df)
+    # get_pie_flock_types(df, "Ohio")
+
     # TEST: sum in given time frame
     # frame = get_time_frame_by_location("2025-01-13", "2025-01-14")
+    # frame = get_time_frame_by_location("2022-04-19", "2022-04-20")
     # print(sum_by_date(frame))
+    # print(frame)
