@@ -5,6 +5,7 @@ from queries import *
 
 df = get_db()
 
+# Horizontal bar graph comparing % frequency of outbreaks (scope: national or state)
 def get_horizontal_comparison_frequencies(df, *args, show_top_n=None, **kwargs):
     # Step 1: Grab title and output file (if manually set)
     title = kwargs.get("title", None)
@@ -97,7 +98,7 @@ def get_horizontal_comparison_frequencies(df, *args, show_top_n=None, **kwargs):
     fig.write_html(output_file, config=config)
     print(f"Comparison chart saved to {output_file}")
 
-
+# Horizontal bar graph comparing % sizes of outbreaks (scope: national or state)
 def get_horizontal_comparison_flock_sizes(df, *args, show_top_n=None, **kwargs):
     # Step 1: Grab title and output file (if manually set)
     title = kwargs.get("title", None)
@@ -189,7 +190,7 @@ def get_horizontal_comparison_flock_sizes(df, *args, show_top_n=None, **kwargs):
     fig.write_html(output_file, config=config)
     print(f"Comparison chart saved to {output_file}")
 
-
+# Horizontal bar graph comparing % of outbreaks (scope: national or state)
 def get_horizontal_comparison_flock_types(df, *args, show_top_n=None, **kwargs):
     # Step 1: Grab title and output file (if manually set)
     title = kwargs.get("title", None)
@@ -263,7 +264,62 @@ def get_horizontal_comparison_flock_types(df, *args, show_top_n=None, **kwargs):
     fig.write_html(output_file, config=config)
     print(f"Comparison chart saved to {output_file}")
 
+# Pie graph comparing % frequency of outbreaks (scope: national or state)
+def get_pie_frequencies(df, *args, **kwargs):
+    title = kwargs.get("title", None)
+    output_file = kwargs.get("output_file", "pie_flock_types_output.html")
 
+    if df.empty:
+        print("No data to visualize.")
+        return
+
+    df = df.copy()
+
+    # Determine scope
+    if len(args) == 0:
+        scope_name = "USA"
+    elif len(args) == 1:
+        scope_name = args[0].title()
+        df = df[df["State"].str.title() == scope_name]
+    else:
+        raise ValueError("Only 0 or 1 argument allowed (for national or state-level comparison)")
+
+    # Group by Flock Type and calculate frequency
+    grouped = df["Flock Type"].value_counts().reset_index()
+    grouped.columns = ["Flock Type", "Count"]
+    grouped["Flock (%)"] = (grouped["Count"] / grouped["Count"].sum() * 100).round(3)
+
+    # Title fallback
+    if not title:
+        title = f"Frequency of Outbreaks by Flock Type - {scope_name}"
+
+    # Create pie chart
+    fig = px.pie(
+        grouped,
+        names="Flock Type",
+        values="Count",
+        title=title,
+        hover_data=["Flock (%)"]
+    )
+
+    fig.update_traces(
+        textinfo="percent+label",
+        hovertemplate="%{label}<br>Outbreaks: %{value}<br>Percentage: %{customdata[0]}%",
+        customdata=grouped[["Flock (%)"]]
+    )
+
+    fig.update_layout(
+        title_x=0.5,
+        width=800,
+        height=800,
+        template="plotly_white"
+    )
+
+    config = {"displayModeBar": True}
+    fig.write_html(output_file, config=config)
+    print(f"Plot saved to {output_file}")
+
+# Pie graph comparing % sizes of outbreaks (scope: national or state)
 def get_pie_flock_sizes(df, *args, **kwargs):
     title = kwargs.get("title", None)
     output_file = kwargs.get("output_file", "pie_flock_sizes_output.html")
@@ -319,7 +375,7 @@ def get_pie_flock_sizes(df, *args, **kwargs):
     fig.write_html(output_file, config=config)
     print(f"Pie chart saved to {output_file}")
 
-
+# Pie graph comparing % of outbreaks (scope: national or state)
 def get_pie_flock_types(df, *args):
     df = df.copy()
 
@@ -365,7 +421,8 @@ def get_pie_flock_types(df, *args):
     fig.write_html("pie_chart.html", config=config)
     print(f"Plot saved to pie_chart.html")
 
-
+# Bar graph showing summed outbreaks over time
+#! Need to fix this; I think sums don't show up correctly on labels
 def get_vertical_outbreaks_over_time(df, output_file="outbreak_bar_graph.html", title="Outbreaks Over Time"):
     if df.empty:
         print("No data to plot. Check your date range and filters.")
@@ -409,7 +466,7 @@ def get_vertical_outbreaks_over_time(df, output_file="outbreak_bar_graph.html", 
     fig.write_html(output_file, config=config)
     print(f"Plot saved to {output_file}")
 
-
+# Line graph showing summed outbreaks over time (opt for bar graph each time to accurately show gaps)
 def line_graph_maker(df, output_file="outbreak_plot.html", title="Outbreaks Over Time"):
     if df.empty:
         print("No data to plot. Check your date range and filters.")
@@ -454,7 +511,7 @@ def line_graph_maker(df, output_file="outbreak_plot.html", title="Outbreaks Over
     fig.write_html(output_file, config=config)
     print(f"Plot saved to {output_file}")
 
-
+# Helper method to pick titles. Not very useful on its own
 def title_picker(frame):
     if len(frame) > 0:
         unique_states = frame["State"].dropna().unique()
@@ -479,10 +536,10 @@ if __name__ == "__main__":
     # frame = get_time_frame_by_location("2024", "2030", "ioWA", "BUENA VistA")    # <== County
     # title = f"Outbreaks Over Time - {title_picker(frame)}"
     # summed_frame = sum_by_date(frame)
-    # get_vertical_outbreaks_over_time(summed_frame, title=title)
+    # get_vertical_outbreaks_over_time((summed_frame, title=title)
+    get_vertical_outbreaks_over_time(df)
     # # line_graph_maker(summed_frame)
-    
-    # df = get_time_frame_by_location("2022", "3000")  # full USA
+
     # get_horizontal_comparison_frequencies(df)
     # get_horizontal_comparison_frequencies(df, show_top_n=10)
     # get_horizontal_comparison_frequencies(df, "Georgia")
@@ -497,12 +554,18 @@ if __name__ == "__main__":
     # get_horizontal_comparison_flock_sizes(df, output_file="ga_top10.html", show_top_n=10)
     # get_horizontal_comparison_flock_sizes(df, title="Top Counties in GA", output_file="myplot.html", show_top_n=15)
 
+    # get_horizontal_comparison_flock_types(df)
+    # get_horizontal_comparison_flock_types(df, "Georgia")
+
+    # get_pie_frequencies(df)
+    # get_pie_frequencies(df, "Georgia")
+
     # get_pie_flock_sizes(df)
-    get_pie_flock_sizes(df, "Ohio")
-    
+    # get_pie_flock_sizes(df, "Ohio")
+
     # get_pie_flock_types(df)
     # get_pie_flock_types(df, "Ohio")
-    
+
     # TEST: sum in given time frame
     # frame = get_time_frame_by_location("2025-01-13", "2025-01-14")
     # print(sum_by_date(frame))
