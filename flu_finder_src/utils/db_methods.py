@@ -1,4 +1,5 @@
 import gspread
+import os
 from google.oauth2.service_account import Credentials
 from data_fetcher import get_sorted_dataframe_from_link
 import pandas as pd
@@ -13,10 +14,11 @@ creds = Credentials.from_service_account_file("./google_backend.json", scopes=SC
 # Authorize gspread with the credentials
 client = gspread.authorize(creds)
 
+SHEET_ID_DATA = os.getenv("SHEET_ID_DATA")
 
 # --- data ---
 # Open the spreadsheet by name or URL
-sheet1 = client.open("data").sheet1
+sheet1 = client.open_by_key(SHEET_ID_DATA).worksheet("Sheet1")
 
 
 #! To automate, make this a daily cron job
