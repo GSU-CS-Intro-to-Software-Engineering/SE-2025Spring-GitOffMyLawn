@@ -422,7 +422,6 @@ def get_pie_flock_types(df, *args):
     print(f"Plot saved to pie_chart.html")
 
 # Bar graph showing summed outbreaks over time
-#! Need to fix this; I think sums don't show up correctly on labels
 def get_vertical_outbreaks_over_time(df, output_file="outbreak_bar_graph.html", title="Outbreaks Over Time"):
     if df.empty:
         print("No data to plot. Check your date range and filters.")
@@ -430,9 +429,11 @@ def get_vertical_outbreaks_over_time(df, output_file="outbreak_bar_graph.html", 
 
     df = df.copy()
     df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"])
+    
+    grouped = df.groupby("Outbreak Date", as_index=False)["Flock Size"].sum()
 
     fig = px.bar(
-        df,
+        grouped,
         x="Outbreak Date",
         y="Flock Size",
         title=title,
@@ -466,7 +467,7 @@ def get_vertical_outbreaks_over_time(df, output_file="outbreak_bar_graph.html", 
     fig.write_html(output_file, config=config)
     print(f"Plot saved to {output_file}")
 
-# Line graph showing summed outbreaks over time (opt for bar graph each time to accurately show gaps)
+# Line graph showing summed outbreaks over time (opt for vertical bar graph each time to accurately show gaps)
 def line_graph_maker(df, output_file="outbreak_plot.html", title="Outbreaks Over Time"):
     if df.empty:
         print("No data to plot. Check your date range and filters.")
@@ -475,9 +476,10 @@ def line_graph_maker(df, output_file="outbreak_plot.html", title="Outbreaks Over
     df = df.copy()
     df["Outbreak Date"] = pd.to_datetime(df["Outbreak Date"])
     
+    grouped = df.groupby("Outbreak Date", as_index=False)["Flock Size"].sum()
 
     fig = px.line(
-        df,
+        grouped,
         x="Outbreak Date",
         y="Flock Size",
         title=title,
@@ -511,7 +513,7 @@ def line_graph_maker(df, output_file="outbreak_plot.html", title="Outbreaks Over
     fig.write_html(output_file, config=config)
     print(f"Plot saved to {output_file}")
 
-# Helper method to pick titles. Not very useful on its own
+# Helper method to pick title (Not very useful on its own)
 def title_picker(frame):
     if len(frame) > 0:
         unique_states = frame["State"].dropna().unique()
@@ -528,7 +530,6 @@ def title_picker(frame):
     return title_suffix
 
 
-
 #------------------------------------------- Method Testing -----------------------------------------#
 if __name__ == "__main__":
     # frame = get_time_frame_by_location("2022", "2030")                           # <== National
@@ -536,9 +537,10 @@ if __name__ == "__main__":
     # frame = get_time_frame_by_location("2024", "2030", "ioWA", "BUENA VistA")    # <== County
     # title = f"Outbreaks Over Time - {title_picker(frame)}"
     # summed_frame = sum_by_date(frame)
-    # get_vertical_outbreaks_over_time((summed_frame, title=title)
+    # get_vertical_outbreaks_over_time(summed_frame, title=title)
     get_vertical_outbreaks_over_time(df)
     # # line_graph_maker(summed_frame)
+    # # line_graph_maker(df)
 
     # get_horizontal_comparison_frequencies(df)
     # get_horizontal_comparison_frequencies(df, show_top_n=10)
@@ -568,6 +570,6 @@ if __name__ == "__main__":
 
     # TEST: sum in given time frame
     # frame = get_time_frame_by_location("2025-01-13", "2025-01-14")
+    # frame = get_time_frame_by_location("2022-04-19", "2022-04-20")
     # print(sum_by_date(frame))
-
-#! Replace function names to all have format (get_...)
+    # print(frame)
